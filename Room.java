@@ -21,7 +21,7 @@ public class Room {
       return "Room type: " + roomType + "Bedrooms: " + roomCount + "Beds: " + bedCount;
    }
 
-   public static int displayPrice(RoomPrice roomPrice) {;
+   public static int displayPrice(RoomPrice roomPrice) { //RoomPrice still needs to be implemented
       return roomPrice;
    }
 }
