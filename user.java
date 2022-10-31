@@ -9,7 +9,6 @@ public String street;
 public String city;
 public int zip_code;
 public int phone_num;
-public ? reward_tier;
 
 	
 
