@@ -1,7 +1,17 @@
 public class User {
-public String userName;
+
+public int userId;
+public String first_name;
+public String last_name;
 public int dateOfBirth;
 public String email;
+public String street;
+public String city;
+public int zip_code;
+public int phone_num;
+public ? reward_tier;
+
+	
 
 public User(int userName, int dateOfBirth, String email){ //constructor
 
