@@ -7,7 +7,7 @@ public class Room {
    private int showerCount;
    private Amenities amenities = new Amenities(); //to be implemented later when Amenities() is created
 
-   public Room(int maxGuestCount, int roomCount, int bedCount, String roomType,
+   public Room(int maxGuestCount, int roomCount, int bedCount, String roomSuite,
                int bathroomCount, int showerCount) {
       this.maxGuestCount = maxGuestCount;
       this.roomCount = roomCount;
