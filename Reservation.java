@@ -6,29 +6,35 @@ import java.text.SimpleDateFormat;
 //import java.text.ParseException;
 
 public class Reservation {
-	public int bookingId;
-	public int userId;
-	public int hotelId;
-	public int durationOfStay;
-	public int guestCount;	
+	public int reservation_id;
+	public int user_id;
+	public int hotel_id;
+	
+	public int checkin_day;
+	public int checkout_day;
+	public int stay_duration; // numOfStay
+	public int guest_count;
+	
+	private boolean has_payed;
+	
+	public String room_type;
 	public String currDate;
-	private boolean paymentStatus = false;
-	//private Room myRoom = new Room(); // implemented later. 
 	
 	/**
 	 * Class constructor to display Reservation informatation
 	 */
 	public Reservation() {};
 
-	public Reservation(int bookingId, int userId, int hotelId, int durationOfStay, 
-			int guestCount, String currDate, boolean paymentStatus) {
-		this.bookingId = bookingId;
-		this.userId = userId;
-		this.hotelId = hotelId;
-		this.durationOfStay = durationOfStay;
-		this.guestCount = guestCount;
+	public Reservation(int reservation_id, int user_id, int hotel_id, int stay_duration, 
+			int guest_count, boolean has_payed , String currDate) {
+		this.reservation_id = reservation_id;
+		this.user_id = user_id;
+		this.hotel_id = hotel_id;
+		this.stay_duration = stay_duration;
+		this.guest_count = guest_count;
+		this.has_payed = has_payed;
 		this.currDate = currDate;
-		this.paymentStatus = paymentStatus;
+		
 	}
 	
 	public static String searchLocation(String destlocation) {
@@ -57,13 +63,6 @@ public class Reservation {
 		return str;
 	}
 	
-	// this method might be redundant, but goal is to save date of when reservation is made. 
-	// that way this date can be sent to user via email to keep in record. 
-	public static String reservationDateMade() {
-		String reservationMade = "";
-		reservationMade = (currentDate());
-		return reservationMade;
-	}	
 }
 
 
