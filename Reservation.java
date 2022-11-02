@@ -43,8 +43,17 @@ public class Reservation {
 		return "";
 	}
 	
-	public static int priceRange(int min, int max){
+	public static void priceRange(int min, int max){
 		// filters searches based on price range
+		/*
+		Potential implementation: 
+		if(Room.price <= min && Room.price >= max){
+			System.out.print(Room.getName?)
+			}
+		else	{
+		System.out.print("you too poor");
+			}	
+		*/
 		return -1;
 	}
 	
