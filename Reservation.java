@@ -4,6 +4,8 @@
 import java.util.Date;
 import java.text.SimpleDateFormat;
 //import java.text.ParseException;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 public class Reservation {
 	public int reservation_id;
@@ -70,6 +72,27 @@ public class Reservation {
 		SimpleDateFormat formatter = new SimpleDateFormat("MM/dd/yy");
 		String str = formatter.format(date);
 		return str;
+	}
+	
+	/** 
+	  numOfStay returns the number of days reservation has been selected
+	 * */
+	
+	// (input date in this format: "YYYY-MM-DD")
+	public static void numOfStay(CharSequence checkInDate, CharSequence checkOutDate) {
+		try {
+			LocalDate dateBefore = LocalDate.parse(checkInDate);
+			//CharSequence checkOutDate;
+			LocalDate dateAfter = LocalDate.parse(checkOutDate);
+			
+			 long daysDiff = ChronoUnit.DAYS.between(dateBefore, dateAfter);
+			 System.out.println("The number of days between dates: " + daysDiff);
+					
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 	
 }
