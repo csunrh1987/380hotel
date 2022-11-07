@@ -40,8 +40,8 @@ public class RoomPrice {
     }
     public int roomPrice(long nightsStayed, int roomPrice,
                           int oneNightPrice) {
-
-        roomPrice = oneNightPrice * nightsStayed;
+        Integer nights = (int) (long) nightsStayed;
+        roomPrice = oneNightPrice * nights;
         return roomPrice;
     }
 
