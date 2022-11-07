@@ -73,27 +73,26 @@ public class Reservation {
 		String str = formatter.format(date);
 		return str;
 	}
-	
-	/** 
+
+	/**
 	  numOfStay returns the number of days reservation has been selected
 	 * */
-	
+
 	// (input date in this format: "YYYY-MM-DD")
-	public static void numOfStay(CharSequence checkInDate, CharSequence checkOutDate) {
-		try {
-			LocalDate dateBefore = LocalDate.parse(checkInDate);
-			//CharSequence checkOutDate;
-			LocalDate dateAfter = LocalDate.parse(checkOutDate);
-			
-			 long daysDiff = ChronoUnit.DAYS.between(dateBefore, dateAfter);
-			 System.out.println("The number of days between dates: " + daysDiff);
-					
-			
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		
-	}
+//	public static void numOfStay(CharSequence checkInDate, CharSequence checkOutDate) {
+//		try {
+//			LocalDate dateBefore = LocalDate.parse(checkInDate);
+//			//CharSequence checkOutDate;
+//			LocalDate dateAfter = LocalDate.parse(checkOutDate);
+//
+//			 long daysDiff = ChronoUnit.DAYS.between(dateBefore, dateAfter);
+//			 System.out.println("The number of days between dates: " + daysDiff);
+//
+//
+//		} catch(Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 	
 }
 

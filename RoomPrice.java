@@ -1,15 +1,15 @@
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+
 public class RoomPrice {
 
     private int roomPrice;
     private String firstNightDate;
     private String lastNightDate;
     private long nightsStayed;
+    private int oneNightPrice;
 
     public RoomPrice(int roomPrice, String firstNightDate,
                      String lastNightDate, long nightsStayed) {
@@ -19,23 +19,29 @@ public class RoomPrice {
         this.nightsStayed = nightsStayed;
 
     }
-    // needs testing
-    public long calculateTotalNights (int roomPrice, String firstNightDate, String lastNightDate,
-                                     long nightsStayed) throws IOException {
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MM yyyy");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        firstNightDate = reader.readLine();
-        lastNightDate = reader.readLine();
-        LocalDate firstDate = LocalDate.parse(firstNightDate, formatter);
-        LocalDate lastDate = LocalDate.parse(lastNightDate, formatter);
-        nightsStayed = ChronoUnit.DAYS.between(firstDate, lastDate);
-        System.out.println("Nights stayed: " + nightsStayed); //REMOVE
+    /**
+     numOfStay returns the number of days reservation has been selected
+     * */
 
-        return nightsStayed;
+    // (input date in this format: "YYYY-MM-DD")
+    public static void numOfStay(CharSequence checkInDate, CharSequence checkOutDate,
+                                 long nightsStayed) {
+        try {
+            LocalDate dateIn = LocalDate.parse(checkInDate);
+            //CharSequence checkOutDate;
+            LocalDate dateOut = LocalDate.parse(checkOutDate);
+
+            nightsStayed = ChronoUnit.DAYS.between(dateIn, dateOut);
+            System.out.println("The number of days between dates: " + nightsStayed);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
+    public int roomPrice(long nightsStayed, int roomPrice,
+                          int oneNightPrice) {
 
-    public int roomPrice(int nightsStayed, int roomPrice) {
+        roomPrice = oneNightPrice * nightsStayed;
         return roomPrice;
     }
 
