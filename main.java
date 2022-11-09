@@ -12,17 +12,17 @@ public class main {
 			
 			switch(choice){
 					
-				case 1: op1(); break;	
-				case 2: op2(); break;
-				case 3: op3(); break;
+				case 1: createUser(); break;	
+				case 2: makeRerservation(); break;
+				case 3: deleteReservation(); break;
 				default: System.out.print("\nbye");
 			}
 		}
 	}
-	public static void op1(){
+	public static void createUser(){
 		System.out.print("\nCreate new user algorithm goes here..");
 	}
-	public static void op2(){
+	public static void makeRerservation(){
 		System.out.print("\nEnter user ID: ");
 		String user_id = input.nextInt();
 		System.out.print("\nEnter hotel id: "); //should this be id or name?
@@ -37,8 +37,11 @@ public class main {
 		System.out.print("Reservation has been created.");
 		
 	}
-	public static void op3(){
-		System.out.print("\nDelete reservation algorithm goes here..");
+	public static void deleteReservation(){
+		System.out.print("\nPlease enter reservation id: ");
+		int id;
+		hotel.removeReservation(id);
+		
 	}
 	
 
