@@ -3,7 +3,7 @@ public class User {
 public int userId;
 private String first_name;
 public String last_name;
-public int dateOfBirth;
+public Date dateOfBirth; //changed this to Date type
 public String email;
 public String street;
 public String city;
@@ -26,7 +26,7 @@ public User(String first_name, String last_name, int dateOfBirth, String email){
 	this. email = email;
 	}
 
-/*making reservation method
+/*making reservation method - moved these to Hotel class. Discuss?
 public static void makeReservation(Hotel hotelName){ 
 	Reservation myReservation = new Reservation(...);
 	System.out.print("You made a reservation");
@@ -42,10 +42,45 @@ public static void deleteReservation(Reservation givenReservation){
 public void setFirstName(String first_name){
 	this.first_name = first_name;
 	}
-public String getFirst(){
+
+public void setLastName(String last_name){
+	this.first_name = last_name;
+	}
+public void setEmail(String email){
+	this.email = email;
+	}
+public void setAddress(String street, String city, int zip_code){
+	this.street = street;
+	this.city = city;
+	this.zip_code = zip_cide;
+	}
+public void setPhoneNum(int phone_num){
+	this.phone_num = phone_num;
+	}
+
+	
+//getters
+public String getFirstName(){
 	return first_name;
 	}
-//generating user
+public String getLastName(){
+	return last_name;
+	}
+public Date getDOB(){
+	return dateOfBirth;
+	}
+public String getEmail(){
+	return email;
+	}
+public String getAddress(){
+	return street+" " + city + " " + zipcode;
+	}
+
+public 	int getPhoneNumber(){
+	return phone_num;
+	}
+	
+	//generating user
 private int generateId(){
 		int id = (int)(Math.random() * 100000000) + 1 ;
 		return id;
