@@ -1,5 +1,10 @@
-package mailer;
+package mail;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Date;
 import java.util.Properties;
 
 import javax.mail.Message;
@@ -14,13 +19,6 @@ import javax.mail.internet.MimeMessage;
  * */
 
 public class JavaMailSender {
-
-	// Run the mail example
-	public static void main(String[] args) {
-		// Send email
-		sendEmail("javaDrinkers380@gmail.com");
-	}
-
 	/**
 	 * Send the email via SMTP using TLS and SSL
 	 */
@@ -66,12 +64,23 @@ public class JavaMailSender {
 			// tempmessage for testing
 			
 			// Set message text
-			message.setText("----------------------------------------------------------------------------------------\n"
-					+ "Java Casino, Resort and Spa\n\n" + "Check in             Check out\n"
-					+ "Dec 17–19, 2022        Dec 19, 2022\n\n" + "Duration of stay\n" + "2 nights\n\n" + "Address\n"
-					+ "71324 Espresso Drive, Caramel, CA 91234, USA\n\n" + "Phone number\n" + "+1 111-222-3333\n\n"
+			message.setText("----------------------------------------------------------------------\n"
+					+ hotel_name +"\n\n" 
+					
+					+ userName +", \n"
+					+ "Check in             Check out\n"
+					+ JavaMailSender.ConvertDate(checkin_day) +"         " + JavaMailSender.ConvertDate(checkout_day)+ "\n\n" 
+					+ "Duration of stay\n" 
+					+ JavaMailSender.numOfStay(checkin_day, checkout_day) +" nights\n\n" 
+					
+					+ "Address\n"
+					+ "71324 Espresso Drive, Caramel, CA 91234, USA\n\n" 
+					
+					+ "Phone number\n" 
+					+ "+1 111-222-3333\n\n"
+					
 					+ "Confirmation number\n"
-					+ "QYATP\n----------------------------------------------------------------------------------------");
+					+ "QYATP\n----------------------------------------------------------------------");
 
 			System.out.print("Sending message...");
 			// Send the message
@@ -83,5 +92,53 @@ public class JavaMailSender {
 			e.printStackTrace();
 		}
 	}
-}
+	
+	
+	/**
+	  * returns the number of nights based on two different dates.  
+	  * */
+		public static long numOfStay(CharSequence checkInDate, CharSequence checkOutDate) {
+			long daysDiff = 0;
+			try {
+				LocalDate dateBefore = LocalDate.parse(checkInDate);
+
+				LocalDate dateAfter = LocalDate.parse(checkOutDate);
+				
+				 daysDiff = ChronoUnit.DAYS.between(dateBefore, dateAfter);
+			 
+				// System.out.println("Duration of stay: " + daysDiff);
+						
+				
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+			return daysDiff;
+			
+		}
+		
+	/**
+	  * returns converted date format.  
+	  * */
+		public static Date StringToDate(String dob) throws ParseException {
+			// Instantiating the SimpleDateFormat class
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+			// Parsing the given String to Date object
+			Date date = formatter.parse(dob);
+			// aSystem.out.println("Date object value: "+ date);
+			return date;
+
+		}
+
+		public static String ConvertDate(String input) throws ParseException {
+
+			// Converting String to Date
+			Date date = StringToDate(input);
+
+			//System.out.println(new SimpleDateFormat("MM-dd-yyyy").format(date));
+
+			String newDate = new SimpleDateFormat("MM-dd-yyyy").format(date);
+
+			return newDate;
+		}
+
 }
