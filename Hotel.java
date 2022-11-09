@@ -49,8 +49,16 @@ public void makeReservation(int reservation_id, int user_id, int hotel_id, int s
         }
     }
 }
-        
-        
-          
 
+public void deleteReservation(int reservation_id){
+ for(int i=0; i<reservation.lenght; i++) {
+  if(reservation[i].getId() = reservation_id) {
+      reservation[i] = new Reservation();
+   }
+ else {
+     System.out.print("Reserve not found");
+      }
+   }
+}
+        
 }
