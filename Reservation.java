@@ -2,19 +2,22 @@
    A reservation holds all of user information including all booking details 
  */
 import java.util.Date;
+
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-//import java.text.ParseException;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 
 public class Reservation {
 	public int reservation_id;
 	public int user_id;
 	public int hotel_id;
+	public String hotel_name;
 	
-	public int checkin_day;
-	public int checkout_day;
-	public int stay_duration; // numOfStay
+	public String checkin_day;
+	public String checkout_day;
+	public long stay_duration; // numOfStay
+
+
+
 	public int guest_count;
 	
 	private boolean has_payed;
@@ -39,13 +42,13 @@ public class Reservation {
 		
 	}
 	
-	public static String searchLocation(String destlocation) {
+	public static String displayLocation(String destlocation) {
 		// searches for location
 		// location may or not be avilable based on space and availability.  
 		return "";
 	}
 	
-	public static void priceRange(int min, int max){
+	public static void displayRange(int min, int max){
 		// filters searches based on price range
 		/*
 		Potential implementation: 
@@ -74,25 +77,6 @@ public class Reservation {
 		return str;
 	}
 
-	/**
-	  numOfStay returns the number of days reservation has been selected
-	 * */
-
-	// (input date in this format: "YYYY-MM-DD")
-//	public static void numOfStay(CharSequence checkInDate, CharSequence checkOutDate) {
-//		try {
-//			LocalDate dateBefore = LocalDate.parse(checkInDate);
-//			//CharSequence checkOutDate;
-//			LocalDate dateAfter = LocalDate.parse(checkOutDate);
-//
-//			 long daysDiff = ChronoUnit.DAYS.between(dateBefore, dateAfter);
-//			 System.out.println("The number of days between dates: " + daysDiff);
-//
-//
-//		} catch(Exception e) {
-//			e.printStackTrace();
-//		}
-//	}
 	
 }
 
