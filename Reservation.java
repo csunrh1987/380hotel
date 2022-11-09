@@ -11,7 +11,7 @@ public class Reservation {
 	public int user_id;
 	public int hotel_id;
 	public String hotel_name;
-	
+	public Room room;
 	public String checkin_day;
 	public String checkout_day;
 	public long stay_duration; // numOfStay
@@ -66,6 +66,19 @@ public class Reservation {
 		// returns roomType option 
 		return "";
 	}
+	
+	public static void pickRoom(){
+	/*limit logic under consideration*/
+		System.out.print("What type of room you want? \n1. King\n2. Queen\n3. Junior");
+		
+		int choice = nextLine();
+		switch(choice){
+			case 1: room.setType("King");
+			case 2: room.setType("Queen");
+			case 3: room.setType("Junior);
+			default: System.out.print("You fucked up"); break;
+			}
+		}
 	
 	/**
 	  returns current day of viewing  
