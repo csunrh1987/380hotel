@@ -3,6 +3,7 @@ public class main {
 		public static void main(String[] args){
 		Scanner input = new Scanner(System.in);
 		Hotel hotel = new Hotel();
+		Rerservation reservartion = new Reservation();
 		int choice = 0;
 			
 			
@@ -33,8 +34,10 @@ public class main {
 		int guest_count = input.nextInt();
 		boolean paid = false; //user has not paid at initial reservation creation
 		String currDate = //Date logic
-		hotel.makeReservation(user_id, hotel_id, stay_duration, guest_count, paid, curDate);
+		reservation = hotel.makeReservation(user_id, hotel_id, stay_duration, guest_count, paid, curDate);
 		System.out.print("Reservation has been created.");
+		reservation.pickRoom();
+		
 		
 	}
 	public static void deleteReservation(){
