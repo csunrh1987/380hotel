@@ -5,7 +5,7 @@ public class Room {
    private String roomSuite;
    private int bathroomCount;
    private int showerCount;
-   private Amenities amenities = new Amenities(); //to be implemented later when Amenities() is created
+   //private Amenities amenities = new Amenities(); //to be implemented later when Amenities() is created
 
    public Room(int maxGuestCount, int roomCount, int bedCount, String roomSuite,
                int bathroomCount, int showerCount) {
@@ -22,6 +22,7 @@ public class Room {
    }
 
    public int displayPrice(RoomPrice roomPrice) { //RoomPrice still needs to be implemented
-      return roomPrice;
+      //return roomPrice;
+      return 1; //DEBUG
    }
 }
