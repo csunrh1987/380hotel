@@ -1,28 +1,54 @@
+import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 
 public class Database {
 
-    public static void main(String[] args) throws SQLException {
-
+        static Connection connection = null;
         // still trying to get this to connect, will do soon
-        final String dbURL = "jdbc:mysql://34.94.145.205:mythic-groove-368204:us-west2:java-drinkers-hotel-380/hotel_db?";
-        final String dbUsername = "java";
-        final String dbPassword = "JavaDrinkers380";
+        static String dbURL = "jdbc:mysql://remotemysql.com:3306/fuvZhYQMTx";
+        static String dbUsername = "fuvZhYQMTx";
+        static String dbPassword = "8mfkFc55Ct";
 
         String query = "SELECT test_name FROM test";
 
-        try {
-            Connection connection = DriverManager.getConnection(dbURL,dbUsername,dbPassword);
-            Statement statement = connection.createStatement();
-            ResultSet result = statement.executeQuery(query);
+        public static Connection getConnection(){
+            if (connection == null) {
+                try {
+                    connection = DriverManager.getConnection(dbURL, dbUsername, dbPassword);
 
-            statement.close();
-            connection.close();
+                    if (connection != null) {
+                        System.out.println("Successfully connected to database");
+                    }
+                } catch (SQLException ex) {
+                    System.out.println("SQLException: " + ex.getMessage());
+                    System.out.println("SQLState: " + ex.getSQLState());
+                    System.out.println("VendorError: " + ex.getErrorCode());
+                }
+            }
 
-            System.out.println(result);
+            return connection;
         }
-        catch (SQLException e) {
-            e.printStackTrace();
+
+        public Connection getConnector() {
+            if (connection == null) {
+                try {
+                    connection = DriverManager.getConnection(dbURL, dbUsername, dbPassword);
+
+                    if (connection != null) {
+                        System.out.println("Successfully connected to database");
+                    }
+                } catch (SQLException ex) {
+                    System.out.println("SQLException: " + ex.getMessage());
+                    System.out.println("SQLState: " + ex.getSQLState());
+                    System.out.println("VendorError: " + ex.getErrorCode());
+                }
+            }
+            return connection;
         }
-    }
+
+        public static ResultSet getResultSet(String sql) throws SQLException {
+            Connection myConnection = Database.getConnection();
+            Statement statement = myConnection.createStatement();
+            return statement.executeQuery(sql);
+        }
 }
