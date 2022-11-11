@@ -91,8 +91,79 @@ public class JavaMailSender {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 	}
 	
+	public static void sendEmailDeleteConfirmation(String userName, String email, String hotel_name, String checkin_day, String checkout_day) {
+			Properties connectionProperties = new Properties();
+			// SMTP host
+			connectionProperties.put("mail.smtp.host", "outlook.office365.com");
+
+			// Is authentication enabled
+			connectionProperties.put("mail.smtp.auth", "true");
+			// Is TLS enabled
+			connectionProperties.put("mail.smtp.starttls.enable", "true");
+			// SSL Port
+			connectionProperties.put("mail.smtp.socketFactory.port", "587");
+			// SSL Socket Factory class
+			connectionProperties.put("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			// SMTP port, the same as SSL port :)
+			connectionProperties.put("mail.smtp.port", "587");
+
+			System.out.print("Creating the session...");
+
+			// Create the session
+			Session session = Session.getDefaultInstance(connectionProperties, new javax.mail.Authenticator() { // Define
+																												// the																							// authenticator
+				protected PasswordAuthentication getPasswordAuthentication() {
+					return new PasswordAuthentication("javaDrinkers380@outlook.com", "JavaCoffee123");
+				}
+			});
+
+			System.out.println("done!");
+
+			// Create and send the message
+			try {
+				//Reservation myRes = new Reservation();
+				// Create the message
+				Message message = new MimeMessage(session);
+				// Set sender
+				message.setFrom(new InternetAddress("javaDrinkers380@outlook.com"));
+				// Set the recipients
+				message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
+				// Set message subject
+				message.setSubject(hotel_name + " Your Reservation has been successfully cancelled. ");
+				// Set message text
+				message.setText("----------------------------------------------------------------------\n"
+						+ "Details below: \n "
+						+ hotel_name +"\n\n" 
+						
+						+ userName +", \n"
+						+ "Check in             Check out\n"
+						+ JavaMailSender.ConvertDate(checkin_day) +"         " + JavaMailSender.ConvertDate(checkout_day)+ "\n\n" 
+						+ "Duration of stay\n" 
+						+ JavaMailSender.numOfStay(checkin_day, checkout_day) +" nights\n\n" 
+						
+						+ "Address\n"
+						+ "71324 Espresso Drive, Caramel, CA 91234, USA\n\n" 
+						
+						+ "Phone number\n" 
+						+ "+1 111-222-3333\n\n"
+						
+						+ "Confirmation number\n"
+						+ "QYATP\n----------------------------------------------------------------------"
+						+ "\nOrder cancelled complete. \n");
+
+				System.out.print("Sending message...");
+				// Send the message
+				Transport.send(message);
+
+				System.out.println("done!");
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	
 	/**
 	  * returns the number of nights based on two different dates.  
