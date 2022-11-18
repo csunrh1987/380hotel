@@ -5,6 +5,9 @@
 package HotelManagement;
 
 import java.beans.Statement;
+import java.sql.*;
+import java.util.*;
+import java.util.logging.*;
 
 /**
  *
@@ -17,13 +20,20 @@ public class Room extends javax.swing.JFrame {
      */
     public Room() {
         initComponents();
-        //Connect();
+        Connect();
     }
     
-//    Connnection con;
+    Connection connection;
 //    PreparedStatement pst;
     public void Connect(){
-       //making connection to database 
+       try {
+           Class.forName("com.mysql.jdbc.Driver");
+           connection = DriverManager.getConnection("jdbc:mysql://remotemysql.com:3306/fuvZhYQMTx", "fuvZhYQMTx", "8mfkFc55Ct");
+       } catch (ClassNotFoundException ex) {
+           Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
+       } catch (SQLException ex) {
+           Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
+       }
     }
 
 //    public void autoID(){
