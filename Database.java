@@ -1,6 +1,8 @@
 import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 
+//this is a test
+
 public class Database {
 
         static Connection connection = null;
