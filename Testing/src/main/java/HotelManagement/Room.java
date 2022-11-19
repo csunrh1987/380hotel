@@ -5,6 +5,12 @@
 //i hate git
 package HotelManagement;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author Randy
@@ -16,6 +22,19 @@ public class Room extends javax.swing.JFrame {
      */
     public Room() {
         initComponents();
+        Connect();
+    }
+    
+    Connection connection;
+        public void Connect(){
+       try {
+           Class.forName("com.mysql.jdbc.Driver");
+           connection = DriverManager.getConnection("jdbc:mysql://remotemysql.com:3306/fuvZhYQMTx", "fuvZhYQMTx", "8mfkFc55Ct");
+       } catch (ClassNotFoundException ex) {
+           Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
+       } catch (SQLException ex) {
+           Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
+       }
     }
 
     /**
