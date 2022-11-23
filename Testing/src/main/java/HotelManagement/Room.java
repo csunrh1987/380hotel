@@ -2,7 +2,25 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-//i hate git
+
+/*
+a) Module name or Class name in the Design: Room class
+b) Date of the code: Last edited 11-20-22
+c) Programmer's name: Randy Herrera
+d) Brief description of the class/module: This class handles the creation, editing, and deletion of Room objects in the Hotel app.
+e) Brief  explanation  of  important  functions  in  each  class,  including  its  input values and output values:
+	The function autoID() generates a Room number based on avaliable room numbers. If a room number is taken (e.g. 001), then the next avaliable room number is generated (002). 
+	The function loadRoom() loads Room data into our SQL database. It uses a vector to store and load values. 
+f) Any important data structure in class/methods
+	A vector is used to store values before being sent to our SQL database.
+g) Briefly  describe  any  algorithm  that  you  may  have  used  and  why  did  you select it upon other algorithms where more than one option exists.
+	I chose a "for" loop with a vector rather than an array due to familiarity with with java.sql library.
+	The other methods, including behavior for the Save, Edit, Delete, and Clear buttons, do not use algorithms due to it simpily handling data input and output.
+	
+*/
+
+
+
 package HotelManagement;
 
 //import com.mysql.cj.jdbc.result.ResultSetMetaData;
