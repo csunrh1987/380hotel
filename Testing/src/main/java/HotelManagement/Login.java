@@ -1,5 +1,8 @@
 package hotelmanagament;
-
+/*
+ *Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
+*/
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -154,7 +157,11 @@ public class Login extends javax.swing.JFrame {
 
     private void txtunameActionPerformed(java.awt.event.ActionEvent evt) {                                         
         // TODO add your handling code here:
-    }                                        
+    }                                   
+    
+    /*
+    *Creates text boxes for the login info regarding username and password
+    */
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {                                         
         // TODO add your handling code here:
@@ -167,7 +174,9 @@ public class Login extends javax.swing.JFrame {
         }
         else
         {
-            
+            /*
+            *Coonect username with password
+            */
              try {
                  pst = connection.prepareStatement("select * from username = ? and password = ?");
                  pst.setString(1, username);
@@ -202,6 +211,9 @@ public class Login extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {                                         
         // TODO add your handling code here:
+     /*
+     *Allows for the login window to be closed with the Cancel button
+     */
         System.exit(0);
             
     }                                        
