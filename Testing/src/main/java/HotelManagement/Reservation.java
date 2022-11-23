@@ -21,10 +21,13 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author gabrielsosa
  */
+/**
+ * Reservation allows user to create, edit and delete a Hotel room reservation.
+ */
 public class Reservation extends javax.swing.JFrame {
 
     /**
-     * Creates new form Reservation
+     * Loads reservation interface
      */
     public Reservation() {
         initComponents();
@@ -35,170 +38,136 @@ public class Reservation extends javax.swing.JFrame {
         BedType();
         loadReservation();
     }
-    
+
     //-------------------------------------------------------
     Connection connection;
     PreparedStatement pst;
     DefaultTableModel d;
-        
-    public void Connect(){
-       try {
-           Class.forName("com.mysql.jdbc.Driver");
-           connection = DriverManager.getConnection("jdbc:mysql://remotemysql.com:3306/fuvZhYQMTx", "fuvZhYQMTx", "8mfkFc55Ct");
-       } catch (ClassNotFoundException ex) {
-           Logger.getLogger(Room.class.getName()).log(Level.SEVERE, "2", ex);
-       } catch (SQLException ex) {
-           Logger.getLogger(Room.class.getName()).log(Level.SEVERE, "1", ex);
-       }
+
+    /**
+     * Connects GUI to Database
+     */
+    public void Connect() {
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            connection = DriverManager.getConnection("jdbc:mysql://remotemysql.com:3306/fuvZhYQMTx", "fuvZhYQMTx", "8mfkFc55Ct");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Room.class.getName()).log(Level.SEVERE, "2", ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Room.class.getName()).log(Level.SEVERE, "1", ex);
+        }
     }
-    
-    
-     
-    public void autoID(){
-      
+
+    /**
+     * Generates new Reservation ID number
+     */
+    public void autoID() {
+
         try {
             Statement s = connection.createStatement();
             ResultSet rs = s.executeQuery("select MAX(reservation_id) from reservation");
             rs.next();
             rs.getString("MAX(reservation_id)");
 
-            if(rs.getString("MAX(reservation_id)") == null)
-            {
-            jLabel12.setText("RE001"); // reservation number 
-             }
-            else{
-            long id = Long.parseLong(rs.getString("MAX(reservation_id)").substring(2, rs.getString("MAX(reservation_id)").length()));
-            id++;
-            jLabel12.setText("RE" + String.format("%03d", id));
+            if (rs.getString("MAX(reservation_id)") == null) {
+                jLabel12.setText("RE001"); // reservation number 
+            } else {
+                long id = Long.parseLong(rs.getString("MAX(reservation_id)").substring(2, rs.getString("MAX(reservation_id)").length()));
+                id++;
+                jLabel12.setText("RE" + String.format("%03d", id));
             }
         } catch (SQLException ex) {
             Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    // //SELECT * FROM `room` WHERE 1
-    
-    public void RoomTypeL(){ 
-        try{
-            pst =  connection.prepareStatement("select Distinct room_type from room");
+
+    /**
+     * Selects Distinct room type from Database
+     */
+    public void RoomTypeL() {
+        try {
+            pst = connection.prepareStatement("select Distinct room_type from room");
             ResultSet rs = pst.executeQuery();
             txtrtype.removeAllItems();
-            
-            while(rs.next()){
-            txtrtype.addItem(rs.getString("room_type"));
+
+            while (rs.next()) {
+                txtrtype.addItem(rs.getString("room_type"));
             }
-            
-        } catch (SQLException ex){
+
+        } catch (SQLException ex) {
             Logger.getLogger(Reservation.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-    }
-    
-    
-    
-    public void loadReservation()
-    {
+
+    /**
+     * Loads all current Reservations from Database into table
+     */
+    public void loadReservation() {
         int c;
-        try { 
+        try {
             pst = connection.prepareStatement("select * from reservation");
             ResultSet rs = pst.executeQuery();
-            java.sql.ResultSetMetaData rsd =  rs.getMetaData();
+            java.sql.ResultSetMetaData rsd = rs.getMetaData();
             c = rsd.getColumnCount();
-            d = (DefaultTableModel)jTable1.getModel();
+            d = (DefaultTableModel) jTable1.getModel();
             d.setRowCount(0);
-            while(rs.next())
-            {
+            while (rs.next()) {
                 Vector v2 = new Vector();
-                for(int i = 1;i<=c;i++)
-                {
-                //v2.add(rs.getString("resevation_id"));
-                v2.add(rs.getString("name"));
-                //v2.add(rs.getString("address"));
-                v2.add(rs.getString("phone_num"));
-                v2.add(rs.getString("checkin_date"));
-                v2.add(rs.getString("checkout_date"));
-                v2.add(rs.getString("bed_type"));
-                v2.add(rs.getString("room_type"));
-                v2.add(rs.getString("room_num"));
-                v2.add(rs.getString("room_price"));
+                for (int i = 1; i <= c; i++) {
+                    v2.add(rs.getString("reservation_id"));
+                    v2.add(rs.getString("name"));
+                    v2.add(rs.getString("address")); // note update table on gui to add this 
+                    v2.add(rs.getString("phone_num"));
+                    v2.add(rs.getString("checkin_date"));
+                    v2.add(rs.getString("checkout_date"));
+                    v2.add(rs.getString("bed_type"));
+                    v2.add(rs.getString("room_type"));
+                    v2.add(rs.getString("room_num"));
+                    v2.add(rs.getString("room_price"));
                 }
                 d.addRow(v2);
             }
-            
-            
+
         } catch (SQLException ex) {
             Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
-    public void RoomNo(){ 
-        try{
-            pst =  connection.prepareStatement("select Distinct room_id from room");
+
+    /**
+     * Selects Distinct room number from Database
+     */
+    public void RoomNo() {
+        try {
+            pst = connection.prepareStatement("select Distinct room_id from room");
             ResultSet rs = pst.executeQuery();
             txtro.removeAllItems();
-            
-            while(rs.next()){
-            txtro.addItem(rs.getString("room_id"));
+
+            while (rs.next()) {
+                txtro.addItem(rs.getString("room_id"));
             }
-            
-        } catch (SQLException ex){
+
+        } catch (SQLException ex) {
             Logger.getLogger(Reservation.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-    }
-    
-    
-    public void BedType(){ 
-        try{
-            pst =  connection.prepareStatement("select Distinct bed_type from room");
+
+    /**
+     * Selects Distinct bed type from Database
+     */
+    public void BedType() {
+        try {
+            pst = connection.prepareStatement("select Distinct bed_type from room");
             ResultSet rs = pst.executeQuery();
             txtbtype.removeAllItems();
-            
-            while(rs.next()){
-            txtbtype.addItem(rs.getString("bed_type"));
+
+            while (rs.next()) {
+                txtbtype.addItem(rs.getString("bed_type"));
             }
-            
-        } catch (SQLException ex){
+
+        } catch (SQLException ex) {
             Logger.getLogger(Reservation.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-    }
-    
-//    public void RoomPrice(){ 
-//        try{
-//            pst =  connection.prepareStatement("select Distinct room_price from room");
-//            ResultSet rs = pst.executeQuery();
-//            txtbtype.removeAllItems();
-//            
-//            while(rs.next()){
-//            txtbtype.addItem(rs.getString("room_price"));
-//            }
-//            
-//        } catch (SQLException ex){
-//            Logger.getLogger(Reservation.class.getName()).log(Level.SEVERE, null, ex);
-//    }
-//    }
-    
-    
-    //-------------------------------------------------------
-    
-   
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -309,31 +278,34 @@ public class Reservation extends javax.swing.JFrame {
         });
 
         jButton4.setText("Clear");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Name", "Mobile", "CheckIn", "Checkout", "Bed Type", "Room Type", "RoomNo", "Amount"
+                "Reservation No.", "Name", "Address", "Mobile", "CheckIn", "Checkout", "Bed Type", "Room Type", "Room No.", "Amount"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, true, true, true, true, true, true, true
+                java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+        });
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(jTable1);
@@ -386,6 +358,7 @@ public class Reservation extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(31, 31, 31)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1143, Short.MAX_VALUE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jButton1)
                                 .addGap(34, 34, 34)
@@ -393,9 +366,8 @@ public class Reservation extends javax.swing.JFrame {
                                 .addGap(36, 36, 36)
                                 .addComponent(jButton3)
                                 .addGap(26, 26, 26)
-                                .addComponent(jButton4))
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 756, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(21, Short.MAX_VALUE))
+                                .addComponent(jButton4)))))
+                .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -480,68 +452,62 @@ public class Reservation extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-     Adds new reservation to Database 
+     * Creates new reservation into Database
      */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-    String reno = jLabel12.getText(); 
-    String name = txtname.getText();
-    String address = txtaddress.getText();
-    String mobile = txtmobile.getText();
-    
-    SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd"); // possible format change 
-    String StartDate = df1.format(txtcheckin.getDate());
-    
-    SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd"); // possible format change
-    String EndDate = df2.format(txtcheckout.getDate());
-    
-    String rtype = txtrtype.getSelectedItem().toString();
-    String roomno = txtro.getSelectedItem().toString();
-    
-    String bedtype = txtbtype.getSelectedItem().toString();
-    String amount = txtamount.getText();
+        String reno = jLabel12.getText();
+        String name = txtname.getText();
+        String address = txtaddress.getText();
+        String mobile = txtmobile.getText();
 
-    try {
-        //pst = connection.prepareStatement("update reservation set name = ?, address = ?, phone_num = ?, checkin_date = ?, checkout_date = ?, bed_type = ?, room_num = ?, room_type = ?, room_price = ? where reservation_id = ?");
-        pst = connection.prepareStatement("insert into reservation(reservation_id, name, address, phone_num, checkin_date, checkout_date, bed_type, room_num, room_type, room_price)values(?,?,?,?,?,?,?,?,?,?)");
-       
-        pst.setString(1, reno);
-        pst.setString(2, name);
-        pst.setString(3, address);
-        pst.setString(4, mobile);
-        pst.setString(5, StartDate);
-        pst.setString(6, EndDate);
-        pst.setString(7, bedtype);
-        pst.setString(8, roomno);
-        pst.setString(9, rtype);
-        pst.setString(10, amount);
-        
-        pst.executeUpdate();
-        JOptionPane.showMessageDialog(this, "Reservation Added");
+        SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd"); // possible format change 
+        String StartDate = df1.format(txtcheckin.getDate());
 
-        txtname.setText("");
-        txtaddress.setText("");
-        txtmobile.setText("");
-        txtaddress.setText("");
-        txtmobile.setText("");
-        txtrtype.setSelectedIndex(-1);
-        txtro.setSelectedIndex(-1);
-        txtname.setText("");
-          
-        txtrtype.setSelectedIndex(-1);
-        txtbtype.setSelectedIndex(-1);
-        txtamount.setText("");
-        autoID();
-        //loadRoom();
-        //loadReservation();// possible error
-        jButton1.setEnabled(true);
-        
+        SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd"); // possible format change
+        String EndDate = df2.format(txtcheckout.getDate());
 
+        String rtype = txtrtype.getSelectedItem().toString();
+        String roomno = txtro.getSelectedItem().toString();
 
+        String bedtype = txtbtype.getSelectedItem().toString();
+        String amount = txtamount.getText();
 
-    } catch (SQLException ex) {
-        Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
-    }
+        try {
+
+            pst = connection.prepareStatement("insert into reservation(reservation_id, name, address, phone_num, checkin_date, checkout_date, bed_type, room_num, room_type, room_price)values(?,?,?,?,?,?,?,?,?,?)");
+
+            pst.setString(1, reno);
+            pst.setString(2, name);
+            pst.setString(3, address);
+            pst.setString(4, mobile);
+            pst.setString(5, StartDate);
+            pst.setString(6, EndDate);
+            pst.setString(7, bedtype);
+            pst.setString(8, roomno);
+            pst.setString(9, rtype);
+            pst.setString(10, amount);
+
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Reservation Added");
+
+            txtname.setText("");
+            txtaddress.setText("");
+            txtmobile.setText("");
+            //checkin
+            //checkout
+            txtrtype.setSelectedIndex(-1);
+            txtro.setSelectedIndex(-1);
+            txtbtype.setSelectedIndex(-1);
+            txtamount.setText("");
+
+            autoID();
+            loadReservation();
+            jButton1.setEnabled(true);
+
+        } catch (SQLException ex) {
+            Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void txtnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtnameActionPerformed
@@ -553,44 +519,154 @@ public class Reservation extends javax.swing.JFrame {
     }//GEN-LAST:event_txtbtypeActionPerformed
 
     /**
-     Edit existing reservation from Database
+     * Edit existing reservation from Database
      */
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         // I need to implement Edit button function 
-        
+        String reno = jLabel12.getText();
+        String name = txtname.getText();
+        String address = txtaddress.getText();
+        String mobile = txtmobile.getText();
+
+        SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd"); // possible format change 
+        String StartDate = df1.format(txtcheckin.getDate());
+
+        SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd"); // possible format change
+        String EndDate = df2.format(txtcheckout.getDate());
+
+        String rtype = txtrtype.getSelectedItem().toString();
+        String roomno = txtro.getSelectedItem().toString();
+
+        String bedtype = txtbtype.getSelectedItem().toString();
+        String amount = txtamount.getText();
+
+        try {
+            pst = connection.prepareStatement("update reservation set name = ?, address = ?, phone_num = ?, checkin_date = ?, checkout_date = ?, bed_type = ?, room_num = ?, room_type = ?, room_price = ? where reservation_id = ?");
+            //pst = connection.prepareStatement("insert into reservation(reservation_id, name, address, phone_num, checkin_date, checkout_date, bed_type, room_num, room_type, room_price)values(?,?,?,?,?,?,?,?,?,?)");
+
+            //pst.setString(1, reno);
+            pst.setString(1, name);
+            pst.setString(2, address);
+            pst.setString(3, mobile);
+            pst.setString(4, StartDate);
+            pst.setString(5, EndDate);
+            pst.setString(6, bedtype);
+            pst.setString(7, roomno);
+            pst.setString(8, rtype);
+            pst.setString(9, amount);
+            pst.setString(10, reno);
+
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Reservation Edited");
+
+            txtname.setText("");
+            txtaddress.setText("");
+            txtmobile.setText("");
+
+            // need to implement checkin
+            // need to implement checkout
+            
+            txtrtype.setSelectedIndex(-1);
+            txtro.setSelectedIndex(-1);
+
+            txtrtype.setSelectedIndex(-1);
+            txtbtype.setSelectedIndex(-1);
+            txtamount.setText("");
+            autoID();
+            loadReservation();
+            jButton1.setEnabled(true);
+
+        } catch (SQLException ex) {
+            Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
-     Deletes existing reservation from Database 
+     * Deletes existing reservation from Database
      */
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
         // this method does not yet have full function 
         String roomno = jLabel12.getText();
 
+        try {
+            pst = connection.prepareStatement("delete from reservation where reservation_id = ?");
 
-    try {
-        pst = connection.prepareStatement("delete from reservation where reservation_id = ?");
+            pst.setString(1, roomno);
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Reservation Deleted");
 
-        pst.setString(1, roomno);
-        pst.executeUpdate();
-        JOptionPane.showMessageDialog(this, "Reservation Deleted");
+            txtname.setText("");
+            txtaddress.setText("");
+            txtmobile.setText("");
+
+            // check in
+            txtcheckin.setDate(null);
+            //check out
+            txtcheckout.setDate(null);
+
+            txtrtype.setSelectedIndex(-1);
+            txtro.setSelectedIndex(-1);
+
+            txtrtype.setSelectedIndex(-1);
+            txtbtype.setSelectedIndex(-1);
+            txtamount.setText("");
+            autoID();
+            loadReservation();
+            jButton1.setEnabled(true);
+
+        } catch (SQLException ex) {
+            Logger.getLogger(Reservation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    /**
+     * Clears reservation from Database data from page.
+     */
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        // TODO add your handling code here:
+        txtname.setText("");
+        txtaddress.setText("");
+        txtmobile.setText("");
+
+        // check in
+        txtcheckin.setDate(null);
+        //check out
+        txtcheckout.setDate(null);
+
+        txtrtype.setSelectedIndex(-1);
+        txtro.setSelectedIndex(-1);
 
         txtrtype.setSelectedIndex(-1);
         txtbtype.setSelectedIndex(-1);
         txtamount.setText("");
         autoID();
         loadReservation();
-        jButton3.setEnabled(true);
-        
+        jButton1.setEnabled(true);
+    }//GEN-LAST:event_jButton4ActionPerformed
 
+    /**
+     * Returns current reservation Data to editor
+     */
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
+        d = (DefaultTableModel) jTable1.getModel();
+        int selectIndex = jTable1.getSelectedRow();
+        jLabel12.setText(d.getValueAt(selectIndex, 0).toString());
+        txtname.setText(d.getValueAt(selectIndex, 1).toString());
+        txtaddress.setText(d.getValueAt(selectIndex, 2).toString());
+        txtmobile.setText(d.getValueAt(selectIndex, 3).toString());
 
+        // need to implement checkin
+        // need to implement checkout 
+        txtrtype.setSelectedItem(d.getValueAt(selectIndex, 6).toString()); //??
+        txtro.setSelectedItem(d.getValueAt(selectIndex, 7).toString());  //??
+        txtbtype.setSelectedItem(d.getValueAt(selectIndex, 8).toString()); //??
+        txtamount.setText(d.getValueAt(selectIndex, 9).toString());
 
-    } catch (SQLException ex) {
-        Logger.getLogger(Reservation.class.getName()).log(Level.SEVERE, null, ex);
-    }
-    }//GEN-LAST:event_jButton3ActionPerformed
+        jButton1.setEnabled(false);
+    }//GEN-LAST:event_jTable1MouseClicked
 
     /**
      * @param args the command line arguments
