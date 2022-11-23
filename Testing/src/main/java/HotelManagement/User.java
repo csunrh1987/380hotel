@@ -11,9 +11,13 @@ import javax.swing.JOptionPane;
 import javax.swing.table.*;
 
 /**
- *
- * @author riley
- */
+ * a) Class Main
+ * b) Date: 11/20/2022
+ * c) @author riley
+ * d) GUI class that functions to display user information. 
+ * Has the ability to display user information when selecting the "create a user" button on the Main class.
+ * e) Connects to database via JDBC Mysql, loads user information, and allows the editing of user information
+*/
 public class User extends javax.swing.JFrame {
 
     /**
