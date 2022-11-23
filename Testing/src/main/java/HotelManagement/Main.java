@@ -5,8 +5,12 @@
 package HotelManagement;
 
 /**
- *
- * @author riley
+ * a) Class Main
+ * b) Date: 11/20/2022
+ * c) @author riley
+ * d) Main method to display initial options for GUI
+ * e) Sets other classes to be visible to the user via the main menu. 
+ * Has options to select whatever action the user wants to perform.
  */
 public class Main extends javax.swing.JFrame {
 
@@ -16,7 +20,7 @@ public class Main extends javax.swing.JFrame {
     public Main() {
         initComponents();
     }
-    // add close 
+    // add close to methods later
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
