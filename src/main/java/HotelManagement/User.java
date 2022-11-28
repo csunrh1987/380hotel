@@ -27,6 +27,7 @@ public class User extends javax.swing.JFrame {
         initComponents();
         Connect();
         loadUser();
+        userIDGenerator();
     }
     
     Connection connection;
@@ -39,6 +40,28 @@ public class User extends javax.swing.JFrame {
        } catch (SQLException ex) {
            Logger.getLogger(Room.class.getName()).log(Level.SEVERE, "1", ex);
        }
+    }
+	
+	public void userIDGenerator(){
+      
+        try {
+            Statement s = connection.createStatement();
+            ResultSet rs = s.executeQuery("SELECT MAX(user_id) FROM user");
+            rs.next();
+            rs.getString("MAX(user_id)");
+
+            if(rs.getString("MAX(user_id)") == null) {
+            guiUserID.setText("001");
+            
+            } else {
+                long user_id = Long.parseLong(rs.getString("MAX(user_id)"));
+                user_id++;
+                guiUserID.setText(String.format("%03d", user_id));
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
         
     public void loadUser() {
