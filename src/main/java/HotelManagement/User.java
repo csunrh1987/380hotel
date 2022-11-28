@@ -81,6 +81,7 @@ public class User extends javax.swing.JFrame {
                     v2.add(rs.getString("user_id"));
                     v2.add(rs.getString("name"));
                     v2.add(rs.getString("username"));
+		    		v2.add(rs.getString("password"));
                 }
                 d.addRow(v2);
             }
@@ -88,9 +89,7 @@ public class User extends javax.swing.JFrame {
             } catch (SQLException ex) {
                 Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
             }
-    }
-
-   
+    }  
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -253,41 +252,138 @@ public class User extends javax.swing.JFrame {
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
+	
+	/* GUI CODE */
+	
+	// display user info
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        String user_id = guiUserID.getText();		
         String name = guiName.getText();
         String username = guiUsername.getText();
         String password = guiPassword.getText();
         
         try {
-            pst = connection.prepareStatement("INSERT INTO user(name, username, password) VALUES(?,?,?)");
-            pst.setString(1, name);
-            pst.setString(2, username);
-            pst.setString(3, password);
+            pst = connection.prepareStatement("INSERT INTO user(user_id, name, username, password) VALUES(?,?,?,?)");
+            pst.setString(1, user_id)
+			pst.setString(2, name);
+            pst.setString(3, username);
+            pst.setString(4, password);
             
             pst.executeUpdate();
             JOptionPane.showMessageDialog(this,"User added");
             
+            guiUserID.setText("");			
             guiName.setText("");
             guiUsername.setText("");
             guiPassword.setText("");
             
+			loadUser();
+			userIDGenerator();
+			
             guiName.requestFocus();
-            
-            loadUser();
             
         } catch (SQLException ex) {
             Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
-
+	
+	//close button
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
         
         this.setVisible(false);
     }//GEN-LAST:event_jButton5ActionPerformed
+	
+	//click table and load user info
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {                                     
+        // TODO add your handling code here:
+        
+        d = (DefaultTableModel)jTable1.getModel();
+        int selectIndex = jTable1.getSelectedRow();
+        
+        guiUserID.setText(d.getValueAt(selectIndex, 0).toString());
+        guiName.setText(d.getValueAt(selectIndex, 1).toString());
+        guiUsername.setText(d.getValueAt(selectIndex, 2).toString());
+        guiPassword.setText(d.getValueAt(selectIndex, 3).toString());
+        
+        jButton1.setEnabled(false);
 
+    } 
+	
+	// edit user info
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {                                         
+        // TODO add your handling code here:
+        
+        String user_id = guiUserID.getText();
+        String name = guiName.getText();
+        String username = guiUsername.getText();
+        String password = guiPassword.getText();
+        
+        try {
+            pst = connection.prepareStatement("UPDATE user SET name = ?, username = ?, password = ? WHERE user_id = ?");
+            pst.setString(1, name);
+            pst.setString(2, username);
+            pst.setString(3, password);
+            pst.setString(4, user_id);
+            
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(this,"User edited");
+            
+            guiName.setText("");
+            guiUsername.setText("");
+            guiPassword.setText("");
+            
+            userIDGenerator();
+            loadUser();
+ 
+            jButton1.setEnabled(true);
+     
+        } catch (SQLException ex) {
+            Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    } 	
+	
+	//clear user info after clicking table
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {                                         
+        // TODO add your handling code here:
+        guiName.setText("");
+        guiUsername.setText("");
+        guiPassword.setText("");
+            
+        userIDGenerator();
+        loadUser();
+ 
+        jButton1.setEnabled(true);
+    } 
+	
+	// delete user info after clicking table
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {                                         
+        
+        String user_id = guiUserID.getText();
+
+        try {
+            pst = connection.prepareStatement("DELETE FROM user WHERE user_id = ?");
+
+            pst.setString(1, user_id);
+            
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(this,"User deleted");
+            
+            guiName.setText("");
+            guiUsername.setText("");
+            guiPassword.setText("");
+            
+            userIDGenerator();
+            loadUser();
+ 
+            jButton1.setEnabled(true);
+     
+        } catch (SQLException ex) {
+            Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    } 
     /**
      * @param args the command line arguments
      */
