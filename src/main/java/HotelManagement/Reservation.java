@@ -4,23 +4,35 @@
  */
 package hotelmanagement;
 
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.management.modelmbean.ModelMBean;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+
+import java.util.Date;
 
 /**
  *
  * @author gabrielsosa
- */
+ * a) Class Reservation
+ * b) Date: 11/22/2022
+ * c) @author gabrielsosa
+ * d) Describes reservation details such as user, room and booking information. 
+ * e) Reservation class allows user to create, edit and delete a Hotel room reservation.
+ * 
 /**
  * Reservation allows user to create, edit and delete a Hotel room reservation.
  */
@@ -36,6 +48,7 @@ public class Reservation extends javax.swing.JFrame {
         RoomTypeL();
         RoomNo();
         BedType();
+        loadRoom();
         loadReservation();
     }
 
@@ -118,6 +131,7 @@ public class Reservation extends javax.swing.JFrame {
                     v2.add(rs.getString("name"));
                     v2.add(rs.getString("address")); // note update table on gui to add this 
                     v2.add(rs.getString("phone_num"));
+                    v2.add(rs.getString("email_address")); // new addition 
                     v2.add(rs.getString("checkin_date"));
                     v2.add(rs.getString("checkout_date"));
                     v2.add(rs.getString("bed_type"));
@@ -132,7 +146,40 @@ public class Reservation extends javax.swing.JFrame {
             Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    /**
+     Loads all Rooms available 
+     */
+    public void loadRoom()
+    {
+        int c;
+        try { 
+            pst = connection.prepareStatement("select * from room");
+            ResultSet rs = pst.executeQuery();
+            java.sql.ResultSetMetaData rsd =  rs.getMetaData();
+            c = rsd.getColumnCount();
+            d = (DefaultTableModel)jTable2.getModel();
+            d.setRowCount(0);
+            while(rs.next())
+            {
+                Vector v2 = new Vector();
+                for(int i = 1;i<=c;i++)
+                {
+                v2.add(rs.getString("room_id"));
+                v2.add(rs.getString("room_type"));
+                v2.add(rs.getString("bed_type"));
+                v2.add(rs.getString("room_price"));
+                }
+                d.addRow(v2);
+            }
+            
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 
+    
     /**
      * Selects Distinct room number from Database
      */
@@ -168,7 +215,75 @@ public class Reservation extends javax.swing.JFrame {
             Logger.getLogger(Reservation.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    /**
+     Calculates Total amount due
+     */
+    
+    // need to fix 
+     public static String roomPrice(String roomPrice, String numofNights) {
+         String totalDue = "";
+        //roomPrice = roomPrice * numOfnights ;
+        return totalDue;
+    }
+     
+     //==========================================================================================================
+     /**
+	* returns converted date format.  
+	  * */
+		public static Date StringToDate(String dob) throws ParseException {
+			// Instantiating the SimpleDateFormat class
+			SimpleDateFormat formatter = new SimpleDateFormat("MMM dd,yyyy");
+			// Parsing the given String to Date object
+			Date date = formatter.parse(dob);
+			// aSystem.out.println("Date object value: "+ date);
+			return date;
 
+		}
+
+                // Converts from ("MMM dd,YYYY") to 
+		public static String ConvertDate(String input) throws ParseException {
+
+			// Converting String to Date
+			Date date = StringToDate(input);
+
+			//System.out.println(new SimpleDateFormat("MM-dd-yyyy").format(date));
+
+			String newDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
+
+			return newDate;
+		}
+                
+     /**
+	  * returns the number of nights based on two different dates.  
+	  * */
+        // Date input read as "yyyy-MM-dd"
+		public static long numOfStay(CharSequence checkInDate, CharSequence checkOutDate) {
+			long daysDiff = 0;
+			try {
+//				LocalDate dateBefore = LocalDate.parse(checkInDate);
+//
+//				LocalDate dateAfter = LocalDate.parse(checkOutDate);
+
+                                LocalDate dateBefore = LocalDate.parse(checkInDate);
+
+				LocalDate dateAfter = LocalDate.parse(checkOutDate);
+				
+				 daysDiff = ChronoUnit.DAYS.between(dateBefore, dateAfter);
+			 
+				// System.out.println("Duration of stay: " + daysDiff);
+						
+				
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+			return daysDiff;
+			
+		}
+ 
+
+    //==========================================================================================================
+                
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -178,6 +293,7 @@ public class Reservation extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
@@ -206,47 +322,63 @@ public class Reservation extends javax.swing.JFrame {
         jLabel12 = new javax.swing.JLabel();
         txtcheckin = new com.toedter.calendar.JDateChooser();
         txtcheckout = new com.toedter.calendar.JDateChooser();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
+        jLabel15 = new javax.swing.JLabel();
+        txtemail = new javax.swing.JTextField();
+        jLabel16 = new javax.swing.JLabel();
+        jButton5 = new javax.swing.JButton();
+        txttotaldue = new javax.swing.JLabel();
+        jButton6 = new javax.swing.JButton();
+        txttotaldue1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jPanel1.setBackground(new java.awt.Color(236, 238, 240));
         jPanel1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel1.setFont(new java.awt.Font("Helvetica Neue", 1, 36)); // NOI18N
         jLabel1.setText("Reservation");
 
-        jLabel2.setFont(new java.awt.Font("Helvetica Neue", 1, 12)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
         jLabel2.setText("Reservation No.");
 
-        jLabel3.setFont(new java.awt.Font("Helvetica Neue", 1, 12)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
         jLabel3.setText("Name");
 
-        jLabel4.setFont(new java.awt.Font("Helvetica Neue", 1, 12)); // NOI18N
+        jLabel4.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
         jLabel4.setText("Address");
 
-        jLabel5.setFont(new java.awt.Font("Helvetica Neue", 1, 12)); // NOI18N
+        jLabel5.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
         jLabel5.setText("Mobile");
 
-        jLabel6.setFont(new java.awt.Font("Helvetica Neue", 1, 12)); // NOI18N
+        jLabel6.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
         jLabel6.setText("Check In");
 
-        jLabel7.setFont(new java.awt.Font("Helvetica Neue", 1, 12)); // NOI18N
+        jLabel7.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
         jLabel7.setText("Check Out");
 
-        jLabel8.setFont(new java.awt.Font("Helvetica Neue", 1, 12)); // NOI18N
+        jLabel8.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
         jLabel8.setText("Room Type");
 
-        jLabel9.setFont(new java.awt.Font("Helvetica Neue", 1, 12)); // NOI18N
+        jLabel9.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
         jLabel9.setText("Room No");
 
-        jLabel10.setFont(new java.awt.Font("Helvetica Neue", 1, 12)); // NOI18N
-        jLabel10.setText("Amount");
+        jLabel10.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
+        jLabel10.setText("Avg/night");
 
-        jLabel11.setFont(new java.awt.Font("Helvetica Neue", 1, 12)); // NOI18N
+        jLabel11.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
         jLabel11.setText("Bed Type");
 
         txtname.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txtnameActionPerformed(evt);
+            }
+        });
+
+        txtaddress.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtaddressActionPerformed(evt);
             }
         });
 
@@ -256,6 +388,15 @@ public class Reservation extends javax.swing.JFrame {
             }
         });
 
+        txtamount.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtamountActionPerformed(evt);
+            }
+        });
+
+        jButton1.setBackground(new java.awt.Color(102, 102, 255));
+        jButton1.setFont(new java.awt.Font("Helvetica Neue", 1, 14)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
         jButton1.setText("Save");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -263,6 +404,9 @@ public class Reservation extends javax.swing.JFrame {
             }
         });
 
+        jButton2.setBackground(new java.awt.Color(75, 151, 210));
+        jButton2.setFont(new java.awt.Font("Helvetica Neue", 1, 14)); // NOI18N
+        jButton2.setForeground(new java.awt.Color(255, 255, 255));
         jButton2.setText("Edit");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -270,6 +414,9 @@ public class Reservation extends javax.swing.JFrame {
             }
         });
 
+        jButton3.setBackground(new java.awt.Color(163, 70, 70));
+        jButton3.setFont(new java.awt.Font("Helvetica Neue", 1, 14)); // NOI18N
+        jButton3.setForeground(new java.awt.Color(255, 255, 255));
         jButton3.setText("Delete");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -277,6 +424,9 @@ public class Reservation extends javax.swing.JFrame {
             }
         });
 
+        jButton4.setBackground(new java.awt.Color(181, 155, 69));
+        jButton4.setFont(new java.awt.Font("Helvetica Neue", 1, 14)); // NOI18N
+        jButton4.setForeground(new java.awt.Color(255, 255, 255));
         jButton4.setText("Clear");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -286,23 +436,32 @@ public class Reservation extends javax.swing.JFrame {
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null, null, null}
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Reservation No.", "Name", "Address", "Mobile", "CheckIn", "Checkout", "Bed Type", "Room Type", "Room No.", "Amount"
+                "Reservation No.", "Name", "Address", "Mobile", "Email", "CheckIn", "Checkout", "Bed Type", "Room Type", "Room No.", "Avg/night"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
             }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
         });
+        jTable1.setGridColor(new java.awt.Color(233, 233, 233));
+        jTable1.setShowGrid(true);
         jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jTable1MouseClicked(evt);
@@ -310,9 +469,75 @@ public class Reservation extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(jTable1);
 
-        jLabel12.setFont(new java.awt.Font("Helvetica Neue", 1, 12)); // NOI18N
-        jLabel12.setForeground(new java.awt.Color(255, 0, 0));
+        jLabel12.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
+        jLabel12.setForeground(new java.awt.Color(255, 102, 0));
         jLabel12.setText("jLabel12");
+
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Room Num", "Room Type", "Bed Type", "Avg/night"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTable2.setGridColor(new java.awt.Color(233, 233, 233));
+        jTable2.setShowGrid(true);
+        jTable2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable2MouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(jTable2);
+
+        jLabel15.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
+        jLabel15.setText("Email");
+
+        jLabel16.setFont(new java.awt.Font("Helvetica Neue", 1, 24)); // NOI18N
+        jLabel16.setText("Rooms");
+
+        jButton5.setBackground(new java.awt.Color(0, 153, 0));
+        jButton5.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
+        jButton5.setForeground(new java.awt.Color(255, 255, 255));
+        jButton5.setText("TOTAL:");
+        jButton5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton5MouseClicked(evt);
+            }
+        });
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
+        txttotaldue.setFont(new java.awt.Font("Helvetica Neue", 1, 24)); // NOI18N
+        txttotaldue.setForeground(new java.awt.Color(0, 153, 0));
+        txttotaldue.setText("0");
+
+        jButton6.setBackground(new java.awt.Color(255, 51, 51));
+        jButton6.setFont(new java.awt.Font("Helvetica Neue", 1, 13)); // NOI18N
+        jButton6.setText("Exit");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
+
+        txttotaldue1.setFont(new java.awt.Font("Helvetica Neue", 1, 24)); // NOI18N
+        txttotaldue1.setForeground(new java.awt.Color(0, 153, 0));
+        txttotaldue1.setText("$");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -320,115 +545,144 @@ public class Reservation extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(txtbtype, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(17, 17, 17)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jLabel3)
-                                    .addComponent(jLabel5)
-                                    .addComponent(jLabel4)
-                                    .addComponent(jLabel6)
-                                    .addComponent(jLabel7)
-                                    .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                        .addGap(35, 35, 35)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(jLabel12)
-                                    .addGap(0, 0, Short.MAX_VALUE))
-                                .addComponent(txtrtype, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txtro, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(txtname)
-                                .addComponent(txtaddress)
-                                .addComponent(txtmobile)
-                                .addComponent(txtcheckin, javax.swing.GroupLayout.DEFAULT_SIZE, 141, Short.MAX_VALUE)
-                                .addComponent(txtcheckout, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addComponent(txtamount, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE))))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(98, 98, 98)
-                        .addComponent(jLabel1))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 1043, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(31, 31, 31)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1143, Short.MAX_VALUE)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 348, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jButton1)
-                                .addGap(34, 34, 34)
-                                .addComponent(jButton2)
-                                .addGap(36, 36, 36)
-                                .addComponent(jButton3)
-                                .addGap(26, 26, 26)
-                                .addComponent(jButton4)))))
-                .addContainerGap())
+                                .addGap(137, 137, 137)
+                                .addComponent(jLabel16)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(16, 16, 16)
+                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGap(92, 92, 92)
+                                        .addComponent(jLabel1))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel4)
+                                            .addComponent(jLabel11, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel2)
+                                            .addComponent(jLabel8)
+                                            .addComponent(jLabel5)
+                                            .addComponent(jLabel3))
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addGap(29, 29, 29)
+                                                .addComponent(jLabel12))
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                    .addComponent(txtbtype, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addComponent(txtrtype, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addComponent(txtmobile, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addComponent(txtaddress, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addComponent(txtname, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE))))))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addGap(0, 0, Short.MAX_VALUE)
+                                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 109, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGap(162, 162, 162)
+                                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGap(17, 17, 17)
+                                        .addComponent(jButton5)
+                                        .addGap(4, 4, 4)
+                                        .addComponent(txttotaldue1)
+                                        .addGap(1, 1, 1)
+                                        .addComponent(txttotaldue))))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel9, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel15)
+                                            .addComponent(jLabel10, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(jLabel7)
+                                            .addComponent(jLabel6))
+                                        .addGap(69, 69, 69)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(txtcheckin, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(txtcheckout, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(txtamount, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(txtro, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(txtemail, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addGap(0, 6, Short.MAX_VALUE)))
+                        .addContainerGap())))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jLabel1)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(txtname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel3))
-                                    .addGap(18, 18, 18)
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(txtaddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel4))
-                                    .addGap(18, 18, 18)
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(txtmobile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel5))
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addComponent(txtcheckin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                    .addComponent(txtcheckout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(28, 28, 28))
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addGap(67, 67, 67)
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jLabel2)
-                                        .addComponent(jLabel12))
-                                    .addGap(141, 141, 141)
-                                    .addComponent(jLabel6)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(jLabel7)
-                                    .addGap(34, 34, 34)))
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel8)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(txtrtype, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGap(18, 18, 18)
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(txtro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel9))
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(txtbtype, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jLabel11))))))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jLabel1)
+                    .addComponent(jButton6)
+                    .addComponent(jLabel16, javax.swing.GroupLayout.Alignment.TRAILING))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel10)
-                        .addComponent(txtamount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGap(15, 15, 15)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel12))
+                        .addGap(33, 33, 33)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(txtname, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel15)
+                            .addComponent(txtemail, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(33, 33, 33)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel4)
+                                .addComponent(txtaddress, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel6))
+                            .addComponent(txtcheckin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(37, 37, 37)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(jLabel5)
+                                .addComponent(txtmobile, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel7))
+                            .addComponent(txtcheckout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(28, 28, 28)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel11)
+                            .addComponent(jLabel10)
+                            .addComponent(txtbtype, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtamount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(36, 36, 36)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtrtype, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel9)
+                            .addComponent(txtro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(30, 30, 30)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jButton1)
                             .addComponent(jButton2)
                             .addComponent(jButton3)
-                            .addComponent(jButton4))))
-                .addContainerGap(43, Short.MAX_VALUE))
+                            .addComponent(jButton4)
+                            .addComponent(jButton5)
+                            .addComponent(txttotaldue)
+                            .addComponent(txttotaldue1)))
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 394, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 20, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -437,189 +691,63 @@ public class Reservation extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-     * Creates new reservation into Database
+     * Returns current reservation Data to editor
      */
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
         // TODO add your handling code here:
-        String reno = jLabel12.getText();
-        String name = txtname.getText();
-        String address = txtaddress.getText();
-        String mobile = txtmobile.getText();
 
-        SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd"); // possible format change 
-        String StartDate = df1.format(txtcheckin.getDate());
+        d = (DefaultTableModel) jTable1.getModel();
+        int selectIndex = jTable1.getSelectedRow();
+        jLabel12.setText(d.getValueAt(selectIndex, 0).toString());
+        txtname.setText(d.getValueAt(selectIndex, 1).toString());
+        txtaddress.setText(d.getValueAt(selectIndex, 2).toString());
+        txtmobile.setText(d.getValueAt(selectIndex, 3).toString());
+        txtemail.setText(d.getValueAt(selectIndex, 4).toString());
 
-        SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd"); // possible format change
-        String EndDate = df2.format(txtcheckout.getDate());
-
-        String rtype = txtrtype.getSelectedItem().toString();
-        String roomno = txtro.getSelectedItem().toString();
-
-        String bedtype = txtbtype.getSelectedItem().toString();
-        String amount = txtamount.getText();
-
-        try {
-
-            pst = connection.prepareStatement("insert into reservation(reservation_id, name, address, phone_num, checkin_date, checkout_date, bed_type, room_num, room_type, room_price)values(?,?,?,?,?,?,?,?,?,?)");
-
-            pst.setString(1, reno);
-            pst.setString(2, name);
-            pst.setString(3, address);
-            pst.setString(4, mobile);
-            pst.setString(5, StartDate);
-            pst.setString(6, EndDate);
-            pst.setString(7, bedtype);
-            pst.setString(8, roomno);
-            pst.setString(9, rtype);
-            pst.setString(10, amount);
-
-            pst.executeUpdate();
-            JOptionPane.showMessageDialog(this, "Reservation Added");
-
-            txtname.setText("");
-            txtaddress.setText("");
-            txtmobile.setText("");
-            //checkin
-            //checkout
-            txtrtype.setSelectedIndex(-1);
-            txtro.setSelectedIndex(-1);
-            txtbtype.setSelectedIndex(-1);
-            txtamount.setText("");
-
-            autoID();
-            loadReservation();
-            jButton1.setEnabled(true);
-
-        } catch (SQLException ex) {
-            Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
+        //checkin
+        try{
+            int srow = jTable1.getSelectedRow();
+            //Date date = new SimpleDateFormat("yyyy-MM-dd").parse((String)jTable1.getValueAt(srow,4));
+            Date date = new SimpleDateFormat("MMM dd,yyyy").parse((String)jTable1.getValueAt(srow,5));
+            txtcheckin.setDate(date);
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void txtnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtnameActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtnameActionPerformed
-
-    private void txtbtypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtbtypeActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtbtypeActionPerformed
-
-    /**
-     * Edit existing reservation from Database
-     */
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-        // I need to implement Edit button function 
-        String reno = jLabel12.getText();
-        String name = txtname.getText();
-        String address = txtaddress.getText();
-        String mobile = txtmobile.getText();
-
-        SimpleDateFormat df1 = new SimpleDateFormat("yyyy-MM-dd"); // possible format change 
-        String StartDate = df1.format(txtcheckin.getDate());
-
-        SimpleDateFormat df2 = new SimpleDateFormat("yyyy-MM-dd"); // possible format change
-        String EndDate = df2.format(txtcheckout.getDate());
-
-        String rtype = txtrtype.getSelectedItem().toString();
-        String roomno = txtro.getSelectedItem().toString();
-
-        String bedtype = txtbtype.getSelectedItem().toString();
-        String amount = txtamount.getText();
-
-        try {
-            pst = connection.prepareStatement("update reservation set name = ?, address = ?, phone_num = ?, checkin_date = ?, checkout_date = ?, bed_type = ?, room_num = ?, room_type = ?, room_price = ? where reservation_id = ?");
-            //pst = connection.prepareStatement("insert into reservation(reservation_id, name, address, phone_num, checkin_date, checkout_date, bed_type, room_num, room_type, room_price)values(?,?,?,?,?,?,?,?,?,?)");
-
-            //pst.setString(1, reno);
-            pst.setString(1, name);
-            pst.setString(2, address);
-            pst.setString(3, mobile);
-            pst.setString(4, StartDate);
-            pst.setString(5, EndDate);
-            pst.setString(6, bedtype);
-            pst.setString(7, roomno);
-            pst.setString(8, rtype);
-            pst.setString(9, amount);
-            pst.setString(10, reno);
-
-            pst.executeUpdate();
-            JOptionPane.showMessageDialog(this, "Reservation Edited");
-
-            txtname.setText("");
-            txtaddress.setText("");
-            txtmobile.setText("");
-
-            // need to implement checkin
-            // need to implement checkout
-            
-            txtrtype.setSelectedIndex(-1);
-            txtro.setSelectedIndex(-1);
-
-            txtrtype.setSelectedIndex(-1);
-            txtbtype.setSelectedIndex(-1);
-            txtamount.setText("");
-            autoID();
-            loadReservation();
-            jButton1.setEnabled(true);
-
-        } catch (SQLException ex) {
-            Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
+        catch(Exception e){
+            JOptionPane.showMessageDialog(null, e);
         }
-    }//GEN-LAST:event_jButton2ActionPerformed
 
-    /**
-     * Deletes existing reservation from Database
-     */
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-        // this method does not yet have full function 
-        String roomno = jLabel12.getText();
-
-        try {
-            pst = connection.prepareStatement("delete from reservation where reservation_id = ?");
-
-            pst.setString(1, roomno);
-            pst.executeUpdate();
-            JOptionPane.showMessageDialog(this, "Reservation Deleted");
-
-            txtname.setText("");
-            txtaddress.setText("");
-            txtmobile.setText("");
-
-            // check in
-            txtcheckin.setDate(null);
-            //check out
-            txtcheckout.setDate(null);
-
-            txtrtype.setSelectedIndex(-1);
-            txtro.setSelectedIndex(-1);
-
-            txtrtype.setSelectedIndex(-1);
-            txtbtype.setSelectedIndex(-1);
-            txtamount.setText("");
-            autoID();
-            loadReservation();
-            jButton1.setEnabled(true);
-
-        } catch (SQLException ex) {
-            Logger.getLogger(Reservation.class.getName()).log(Level.SEVERE, null, ex);
+        //checkout
+        try{
+            int srow = jTable1.getSelectedRow();
+            // Date date = new SimpleDateFormat("yyyy-MM-dd").parse((String)jTable1.getValueAt(srow,5));
+            Date date = new SimpleDateFormat("MMM dd,yyyy").parse((String)jTable1.getValueAt(srow,6));
+            txtcheckout.setDate(date);
         }
-    }//GEN-LAST:event_jButton3ActionPerformed
+        catch(Exception e){
+            JOptionPane.showMessageDialog(null, e);
+        }
+
+        txtbtype.setSelectedItem(d.getValueAt(selectIndex, 7).toString()); // issue 
+        txtrtype.setSelectedItem(d.getValueAt(selectIndex, 8).toString()); 
+        txtro.setSelectedItem(d.getValueAt(selectIndex, 9).toString()); // issue 
+        txtamount.setText(d.getValueAt(selectIndex, 10).toString());
+
+        jButton1.setEnabled(false);
+    }//GEN-LAST:event_jTable1MouseClicked
 
     /**
      * Clears reservation from Database data from page.
@@ -629,6 +757,7 @@ public class Reservation extends javax.swing.JFrame {
         txtname.setText("");
         txtaddress.setText("");
         txtmobile.setText("");
+        txtemail.setText("");
 
         // check in
         txtcheckin.setDate(null);
@@ -641,32 +770,267 @@ public class Reservation extends javax.swing.JFrame {
         txtrtype.setSelectedIndex(-1);
         txtbtype.setSelectedIndex(-1);
         txtamount.setText("");
+        txttotaldue.setText(String.valueOf(0));
         autoID();
         loadReservation();
+        loadRoom();
+        Connect();
         jButton1.setEnabled(true);
     }//GEN-LAST:event_jButton4ActionPerformed
 
     /**
-     * Returns current reservation Data to editor
+     * Deletes existing reservation from Database
      */
-    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
-        d = (DefaultTableModel) jTable1.getModel();
-        int selectIndex = jTable1.getSelectedRow();
-        jLabel12.setText(d.getValueAt(selectIndex, 0).toString());
-        txtname.setText(d.getValueAt(selectIndex, 1).toString());
-        txtaddress.setText(d.getValueAt(selectIndex, 2).toString());
-        txtmobile.setText(d.getValueAt(selectIndex, 3).toString());
+        // this method does not yet have full function
+        String roomno = jLabel12.getText();
 
-        // need to implement checkin
-        // need to implement checkout 
-        txtrtype.setSelectedItem(d.getValueAt(selectIndex, 6).toString()); //??
-        txtro.setSelectedItem(d.getValueAt(selectIndex, 7).toString());  //??
-        txtbtype.setSelectedItem(d.getValueAt(selectIndex, 8).toString()); //??
-        txtamount.setText(d.getValueAt(selectIndex, 9).toString());
+        try {
+            pst = connection.prepareStatement("delete from reservation where reservation_id = ?");
 
-        jButton1.setEnabled(false);
-    }//GEN-LAST:event_jTable1MouseClicked
+            pst.setString(1, roomno);
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Reservation Deleted");
+
+            txtname.setText("");
+            txtaddress.setText("");
+            txtmobile.setText("");
+            txtemail.setText("");
+
+            // check in
+            txtcheckin.setDate(null);
+            //check out
+            txtcheckout.setDate(null);
+
+            txtrtype.setSelectedIndex(-1);
+            txtro.setSelectedIndex(-1);
+
+            txtrtype.setSelectedIndex(-1);
+            txtbtype.setSelectedIndex(-1);
+            txtamount.setText("");
+            txttotaldue.setText(String.valueOf(0));
+            
+            autoID();
+            loadReservation();
+            loadRoom();
+            jButton1.setEnabled(true);
+
+        } catch (SQLException ex) {
+            Logger.getLogger(Reservation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    /**
+     * Edit existing reservation from Database
+     */
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        // I need to implement Edit button function
+        String reno = jLabel12.getText();
+        
+        String name = txtname.getText();
+        String address = txtaddress.getText();
+        String mobile = txtmobile.getText();
+        String email = txtemail.getText();
+        
+        SimpleDateFormat df1 = new SimpleDateFormat("MMM dd,yyyy"); // possible format change
+        String StartDate = df1.format(txtcheckin.getDate());
+
+        SimpleDateFormat df2 = new SimpleDateFormat("MMM dd,yyyy"); // possible format change
+        String EndDate = df2.format(txtcheckout.getDate());
+
+        String rtype = txtrtype.getSelectedItem().toString();
+        String roomno = txtro.getSelectedItem().toString();
+
+        String bedtype = txtbtype.getSelectedItem().toString();
+        String amount = txtamount.getText();
+
+        try {
+            pst = connection.prepareStatement("update reservation set name = ?, address = ?, phone_num = ?, email_address = ?, checkin_date = ?, checkout_date = ?, bed_type = ?, room_num = ?, room_type = ?, room_price = ? where reservation_id = ?");
+            //pst = connection.prepareStatement("insert into reservation(reservation_id, name, address, phone_num, checkin_date, checkout_date, bed_type, room_num, room_type, room_price)values(?,?,?,?,?,?,?,?,?,?)");
+
+            //pst.setString(1, reno);
+            pst.setString(1, name);
+            pst.setString(2, address);
+            pst.setString(3, mobile);
+            pst.setString(4, email);
+            pst.setString(5, StartDate);
+            pst.setString(6, EndDate);
+            pst.setString(7, bedtype);
+            pst.setString(8, roomno);
+            pst.setString(9, rtype);
+            pst.setString(10, amount);
+            pst.setString(11, reno);
+
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Reservation Edited");
+
+            txtname.setText("");
+            txtaddress.setText("");
+            txtmobile.setText("");
+            txtemail.setText("");
+
+            // check in
+            txtcheckin.setDate(null);
+            //check out
+            txtcheckout.setDate(null);
+            
+            txtbtype.setSelectedIndex(-1);
+            txtro.setSelectedIndex(-1);
+            txtrtype.setSelectedIndex(-1);
+            
+            txtamount.setText("");
+            txttotaldue.setText(String.valueOf(0));
+            
+            autoID();
+            loadReservation();
+            loadRoom();
+            jButton1.setEnabled(true);
+
+        } catch (SQLException ex) {
+            Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    /**
+     * Creates new reservation into Database
+     */
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        String reno = jLabel12.getText();
+        String name = txtname.getText();
+        String address = txtaddress.getText();
+        String mobile = txtmobile.getText();
+        String email = txtemail.getText();
+
+        SimpleDateFormat df1 = new SimpleDateFormat("MMM dd,yyyy"); // possible format change
+        String StartDate = df1.format(txtcheckin.getDate());
+
+        SimpleDateFormat df2 = new SimpleDateFormat("MMM dd,yyyy"); // possible format change
+        String EndDate = df2.format(txtcheckout.getDate());
+
+        String rtype = txtrtype.getSelectedItem().toString();
+        String roomno = txtro.getSelectedItem().toString();
+
+        String bedtype = txtbtype.getSelectedItem().toString();
+        String amount = txtamount.getText();
+        
+        try {
+
+            pst = connection.prepareStatement("insert into reservation(reservation_id, name, address, phone_num, email_address, checkin_date, checkout_date, bed_type, room_num, room_type, room_price)values(?,?,?,?,?,?,?,?,?,?,?)");
+
+            pst.setString(1, reno);
+            pst.setString(2, name);
+            pst.setString(3, address);
+            pst.setString(4, mobile);
+            pst.setString(5, email);
+            pst.setString(6, StartDate);
+            pst.setString(7, EndDate);
+            pst.setString(8, bedtype);
+            pst.setString(9, roomno);
+            pst.setString(10, rtype);
+            pst.setString(11, amount);
+
+            pst.executeUpdate();
+            JOptionPane.showMessageDialog(this, "Reservation Added, sending confrmation email... ");
+
+            txtname.setText("");
+            txtaddress.setText("");
+            txtmobile.setText("");
+            txtemail.setText("");
+            txtcheckin.setDate(null);
+            txtcheckout.setDate(null);
+            txtrtype.setSelectedIndex(-1);
+            txtro.setSelectedIndex(-1);
+            txtbtype.setSelectedIndex(-1);
+            txtamount.setText("");
+            txttotaldue.setText(String.valueOf(0));
+
+            autoID();
+            loadReservation();
+            loadRoom();
+            jButton1.setEnabled(true);
+
+            // send confirmation email 
+            //String tempEmail = "gabriel.sosa.191@my.csun.edu";
+            //JavaMailSender mailer = new JavaMailSender();
+            //mailer.sendEmail(name, tempEmail, StartDate, EndDate, reno, rtype, roomno,  amount);
+            
+
+        } catch (SQLException ex) {
+            Logger.getLogger(Reservation.class.getName()).log(Level.SEVERE, null, ex);
+        //} catch (ParseException ex) {
+        //    Logger.getLogger(Reservation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void txtbtypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtbtypeActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtbtypeActionPerformed
+
+    private void txtaddressActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtaddressActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtaddressActionPerformed
+
+    private void txtnameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtnameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtnameActionPerformed
+
+    private void txtamountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtamountActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtamountActionPerformed
+
+    /**
+     Loads selected room into text boxes from room table 
+     */
+    private void jTable2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable2MouseClicked
+        // TODO add your handling code here:
+        d  =(DefaultTableModel)jTable2.getModel();
+        
+        int selectIndex = jTable2.getSelectedRow();
+        //jLabel12.setText(d.getValueAt(selectIndex, 0).toString());
+        txtro.setSelectedItem(d.getValueAt(selectIndex, 0).toString());
+        txtrtype.setSelectedItem(d.getValueAt(selectIndex, 1).toString());
+        txtbtype.setSelectedItem(d.getValueAt(selectIndex, 2).toString());
+        txtamount.setText(d.getValueAt(selectIndex, 3).toString());
+        jButton1.setEnabled(true); // set to true when table is clicked 
+        
+    }//GEN-LAST:event_jTable2MouseClicked
+
+    /**
+     Calculates total amount due 
+     */
+    private void jButton5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton5MouseClicked
+
+        try {
+        SimpleDateFormat df1 = new SimpleDateFormat("MMM dd,yyyy"); 
+        String StartDate = df1.format(txtcheckin.getDate());
+        
+        SimpleDateFormat df2 = new SimpleDateFormat("MMM dd,yyyy"); 
+        String EndDate = df2.format(txtcheckout.getDate());
+            
+        String amount = txtamount.getText();
+        
+            long numOfNights = numOfStay(ConvertDate(StartDate), ConvertDate(EndDate));
+            long totalDue = numOfNights * Long.parseLong(amount);
+            txttotaldue.setText(String.valueOf(totalDue));  
+        } catch (ParseException ex) {
+            Logger.getLogger(Reservation.class.getName()).log(Level.SEVERE, null, ex);
+        }
+      
+
+   
+    }//GEN-LAST:event_jButton5MouseClicked
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        // TODO add your handling code here:
+        this.setVisible(false);
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton5ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -704,14 +1068,19 @@ public class Reservation extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel15;
+    private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -722,15 +1091,20 @@ public class Reservation extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;
+    private javax.swing.JTable jTable2;
     private javax.swing.JTextField txtaddress;
     private javax.swing.JTextField txtamount;
     private javax.swing.JComboBox<String> txtbtype;
     private com.toedter.calendar.JDateChooser txtcheckin;
     private com.toedter.calendar.JDateChooser txtcheckout;
+    private javax.swing.JTextField txtemail;
     private javax.swing.JTextField txtmobile;
     private javax.swing.JTextField txtname;
     private javax.swing.JComboBox<String> txtro;
     private javax.swing.JComboBox<String> txtrtype;
+    private javax.swing.JLabel txttotaldue;
+    private javax.swing.JLabel txttotaldue1;
     // End of variables declaration//GEN-END:variables
 }
