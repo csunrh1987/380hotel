@@ -78,15 +78,9 @@ public class ReservationTest {
     public void testStringToDate() throws Exception {
     Reservation test = new Reservation();
     Date expected = test.StringToDate("Jan 10,2023");
-    Date actual = new Date(123,0,10);
-    
-    int output = expected.compareTo(actual);
+    Date actual = new Date(123,0,10); //According to Java, humanity started in 1900 and months begin at 0
     assertEquals(expected,actual);
    
-    
-    
-    
-    
     
     }
 
