@@ -53,8 +53,8 @@ public class Room extends javax.swing.JFrame {
     }
     
     Connection connection;
-    PreparedStatement pst;
-    DefaultTableModel d;
+    PreparedStatement prepStatement;
+    DefaultTableModel myTable;
         
     public void Connect(){
        try {
@@ -70,17 +70,17 @@ public class Room extends javax.swing.JFrame {
     public void autoID(){
       
         try {
-            Statement s = connection.createStatement();
-            ResultSet rs = s.executeQuery("select MAX(room_id) from room");
-            rs.next();
-            rs.getString("MAX(room_id)");
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("select MAX(room_id) from room");
+            resultSet.next();
+            resultSet.getString("MAX(room_id)");
 
-            if(rs.getString("MAX(room_id)") == null)
+            if(resultSet.getString("MAX(room_id)") == null)
             {
             jLabel6.setText("R0001");
              }
             else{
-            long id = Long.parseLong(rs.getString("MAX(room_id)").substring(2, rs.getString("MAX(room_id)").length()));
+            long id = Long.parseLong(resultSet.getString("MAX(room_id)").substring(2, resultSet.getString("MAX(room_id)").length()));
             id++;
             jLabel6.setText("R0" + String.format("%03d", id));
             }
@@ -91,25 +91,25 @@ public class Room extends javax.swing.JFrame {
     
     public void loadRoom()
     {
-        int c;
+        int column;
         try { 
-            pst = connection.prepareStatement("select * from room");
-            ResultSet rs = pst.executeQuery();
-            java.sql.ResultSetMetaData rsd =  rs.getMetaData();
-            c = rsd.getColumnCount();
-            d = (DefaultTableModel)jTable1.getModel();
-            d.setRowCount(0);
-            while(rs.next())
+            prepStatement = connection.prepareStatement("select * from room");
+            ResultSet resultSet = prepStatement.executeQuery();
+            java.sql.ResultSetMetaData resultMeta =  resultSet.getMetaData();
+            column = resultMeta.getColumnCount();
+            myTable = (DefaultTableModel)jTable1.getModel();
+            myTable.setRowCount(0);
+            while(resultSet.next())
             {
                 Vector v2 = new Vector();
-                for(int i = 1;i<=c;i++)
+                for(int i = 1;i<=column;i++)
                 {
-                v2.add(rs.getString("room_id"));
-                v2.add(rs.getString("room_type"));
-                v2.add(rs.getString("bed_type"));
-                v2.add(rs.getString("room_price"));
+                v2.add(resultSet.getString("room_id"));
+                v2.add(resultSet.getString("room_type"));
+                v2.add(resultSet.getString("bed_type"));
+                v2.add(resultSet.getString("room_price"));
                 }
-                d.addRow(v2);
+                myTable.addRow(v2);
             }
             
             
@@ -338,12 +338,12 @@ public class Room extends javax.swing.JFrame {
     String amount = txtamount.getText();
 
     try {
-        pst = connection.prepareStatement("update room set room_type = ?, bed_type = ?, room_price = ? where room_id = ?");
-        pst.setString(1, roomtype);
-        pst.setString(2, bedtype);
-        pst.setString(3, amount);
-        pst.setString(4, roomno);
-        pst.executeUpdate();
+        prepStatement = connection.prepareStatement("update room set room_type = ?, bed_type = ?, room_price = ? where room_id = ?");
+        prepStatement.setString(1, roomtype);
+        prepStatement.setString(2, bedtype);
+        prepStatement.setString(3, amount);
+        prepStatement.setString(4, roomno);
+        prepStatement.executeUpdate();
         JOptionPane.showMessageDialog(this, "Room Edited");
 
         txtrtype.setSelectedIndex(-1);
@@ -377,10 +377,10 @@ public class Room extends javax.swing.JFrame {
 
 
     try {
-        pst = connection.prepareStatement("delete from room where room_id = ?");
+        prepStatement = connection.prepareStatement("delete from room where room_id = ?");
 
-        pst.setString(1, roomno);
-        pst.executeUpdate();
+        prepStatement.setString(1, roomno);
+        prepStatement.executeUpdate();
         JOptionPane.showMessageDialog(this, "Room Deleted");
 
         txtrtype.setSelectedIndex(-1);
@@ -406,12 +406,12 @@ public class Room extends javax.swing.JFrame {
         String amount = txtamount.getText();
         
         try {
-            pst = connection.prepareStatement("insert into room(room_id, room_type, bed_type, room_price) values(?,?,?,?)");
-            pst.setString(1, roomno);
-            pst.setString(2, roomtype);
-            pst.setString(3, bedtype);
-            pst.setString(4, amount);
-            pst.executeUpdate();
+            prepStatement = connection.prepareStatement("insert into room(room_id, room_type, bed_type, room_price) values(?,?,?,?)");
+            prepStatement.setString(1, roomno);
+            prepStatement.setString(2, roomtype);
+            prepStatement.setString(3, bedtype);
+            prepStatement.setString(4, amount);
+            prepStatement.executeUpdate();
             JOptionPane.showMessageDialog(this, "Room Added");
             
             txtrtype.setSelectedIndex(-1);
@@ -430,12 +430,12 @@ public class Room extends javax.swing.JFrame {
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
         // TODO add your handling code here:
-        d  =(DefaultTableModel)jTable1.getModel();
+        myTable  =(DefaultTableModel)jTable1.getModel();
         int selectIndex = jTable1.getSelectedRow();
-        jLabel6.setText(d.getValueAt(selectIndex, 0).toString());
-        txtrtype.setSelectedItem(d.getValueAt(selectIndex, 1).toString());
-        txtbtype.setSelectedItem(d.getValueAt(selectIndex, 2).toString());
-        txtamount.setText(d.getValueAt(selectIndex, 3).toString());
+        jLabel6.setText(myTable.getValueAt(selectIndex, 0).toString());
+        txtrtype.setSelectedItem(myTable.getValueAt(selectIndex, 1).toString());
+        txtbtype.setSelectedItem(myTable.getValueAt(selectIndex, 2).toString());
+        txtamount.setText(myTable.getValueAt(selectIndex, 3).toString());
         jButton1.setEnabled(false);
 
     }//GEN-LAST:event_jTable1MouseClicked
