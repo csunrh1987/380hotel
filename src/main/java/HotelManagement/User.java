@@ -31,30 +31,30 @@ public class User extends javax.swing.JFrame {
     }
     
     Connection connection;
-    PreparedStatement pst;
-    DefaultTableModel d;
+    PreparedStatement prepStatement;
+    DefaultTableModel myTable;
     
     public void Connect(){
         try {
             connection = DriverManager.getConnection("jdbc:mysql://remotemysql.com:3306/fuvZhYQMTx", "fuvZhYQMTx", "8mfkFc55Ct");
        } catch (SQLException ex) {
-           Logger.getLogger(Room.class.getName()).log(Level.SEVERE, "1", ex);
+            Logger.getLogger(Room.class.getName()).log(Level.SEVERE, "1", ex);
        }
     }
 	
 	public void userIDGenerator(){
       
         try {
-            Statement s = connection.createStatement();
-            ResultSet rs = s.executeQuery("SELECT MAX(user_id) FROM user");
-            rs.next();
-            rs.getString("MAX(user_id)");
+            Statement statement = connection.createStatement();
+            ResultSet resultset = statement.executeQuery("SELECT MAX(user_id) FROM user");
+            resultset.next();
+            resultset.getString("MAX(user_id)");
 
-            if(rs.getString("MAX(user_id)") == null) {
+            if(resultset.getString("MAX(user_id)") == null) {
             guiUserID.setText("001");
             
             } else {
-                long user_id = Long.parseLong(rs.getString("MAX(user_id)"));
+                long user_id = Long.parseLong(resultset.getString("MAX(user_id)"));
                 user_id++;
                 guiUserID.setText(String.format("%03d", user_id));
             }
@@ -65,25 +65,25 @@ public class User extends javax.swing.JFrame {
     }
         
     public void loadUser() {
-        int c;
+        int column;
         try { 
-            pst = connection.prepareStatement("SELECT * from user");
-            ResultSet rs = pst.executeQuery();
-            java.sql.ResultSetMetaData rsd =  rs.getMetaData();
-            c = rsd.getColumnCount();
-            d = (DefaultTableModel)jTable1.getModel();
-            d.setRowCount(0);
+            prepStatement = connection.prepareStatement("SELECT * from user");
+            ResultSet resultset = prepStatement.executeQuery();
+            java.sql.ResultSetMetaData resultMeta =  resultset.getMetaData();
+            column = resultMeta.getColumnCount();
+            myTable = (DefaultTableModel)jTable1.getModel();
+            myTable.setRowCount(0);
             
-            while(rs.next()) {
+            while(resultset.next()) {
                 Vector v2 = new Vector();
                 
-                for(int i = 1;i<=c;i++) {
-                    v2.add(rs.getString("user_id"));
-                    v2.add(rs.getString("name"));
-                    v2.add(rs.getString("username"));
-		    		v2.add(rs.getString("password"));
+                for(int i = 1;i<=column;i++) {
+                    v2.add(resultset.getString("user_id"));
+                    v2.add(resultset.getString("name"));
+                    v2.add(resultset.getString("username"));
+		    		v2.add(resultset.getString("password"));
                 }
-                d.addRow(v2);
+                myTable.addRow(v2);
             }
             
             } catch (SQLException ex) {
@@ -264,13 +264,13 @@ public class User extends javax.swing.JFrame {
         String password = guiPassword.getText();
         
         try {
-            pst = connection.prepareStatement("INSERT INTO user(user_id, name, username, password) VALUES(?,?,?,?)");
-            pst.setString(1, user_id)
-			pst.setString(2, name);
-            pst.setString(3, username);
-            pst.setString(4, password);
+            prepStatement = connection.prepareStatement("INSERT INTO user(user_id, name, username, password) VALUES(?,?,?,?)");
+            prepStatement.setString(1, user_id)
+			prepStatement.setString(2, name);
+            prepStatement.setString(3, username);
+            prepStatement.setString(4, password);
             
-            pst.executeUpdate();
+            prepStatement.executeUpdate();
             JOptionPane.showMessageDialog(this,"User added");
             
             guiUserID.setText("");			
@@ -299,13 +299,13 @@ public class User extends javax.swing.JFrame {
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {                                     
         // TODO add your handling code here:
         
-        d = (DefaultTableModel)jTable1.getModel();
+        myTable = (DefaultTableModel)jTable1.getModel();
         int selectIndex = jTable1.getSelectedRow();
         
-        guiUserID.setText(d.getValueAt(selectIndex, 0).toString());
-        guiName.setText(d.getValueAt(selectIndex, 1).toString());
-        guiUsername.setText(d.getValueAt(selectIndex, 2).toString());
-        guiPassword.setText(d.getValueAt(selectIndex, 3).toString());
+        guiUserID.setText(myTable.getValueAt(selectIndex, 0).toString());
+        guiName.setText(myTable.getValueAt(selectIndex, 1).toString());
+        guiUsername.setText(myTable.getValueAt(selectIndex, 2).toString());
+        guiPassword.setText(myTable.getValueAt(selectIndex, 3).toString());
         
         jButton1.setEnabled(false);
 
@@ -321,13 +321,13 @@ public class User extends javax.swing.JFrame {
         String password = guiPassword.getText();
         
         try {
-            pst = connection.prepareStatement("UPDATE user SET name = ?, username = ?, password = ? WHERE user_id = ?");
-            pst.setString(1, name);
-            pst.setString(2, username);
-            pst.setString(3, password);
-            pst.setString(4, user_id);
+            prepStatement = connection.prepareStatement("UPDATE user SET name = ?, username = ?, password = ? WHERE user_id = ?");
+            prepStatement.setString(1, name);
+            prepStatement.setString(2, username);
+            prepStatement.setString(3, password);
+            prepStatement.setString(4, user_id);
             
-            pst.executeUpdate();
+            prepStatement.executeUpdate();
             JOptionPane.showMessageDialog(this,"User edited");
             
             guiName.setText("");
@@ -363,11 +363,11 @@ public class User extends javax.swing.JFrame {
         String user_id = guiUserID.getText();
 
         try {
-            pst = connection.prepareStatement("DELETE FROM user WHERE user_id = ?");
+            prepStatement = connection.prepareStatement("DELETE FROM user WHERE user_id = ?");
 
-            pst.setString(1, user_id);
+            prepStatement.setString(1, user_id);
             
-            pst.executeUpdate();
+            prepStatement.executeUpdate();
             JOptionPane.showMessageDialog(this,"User deleted");
             
             guiName.setText("");
