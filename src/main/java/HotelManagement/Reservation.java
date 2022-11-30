@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package hotelmanagement;
+package HotelManagement;
 
 
 import java.sql.Connection;
@@ -228,11 +228,11 @@ public class Reservation extends javax.swing.JFrame {
      * returns converted date format.
      *
      */
-    public static Date StringToDate(String dob) throws ParseException {
+    public static Date StringToDate(String input) throws ParseException {
         // Instantiating the SimpleDateFormat class
         SimpleDateFormat formatter = new SimpleDateFormat("MMM dd,yyyy");
         // Parsing the given String to Date object
-        Date date = formatter.parse(dob);
+        Date date = formatter.parse(input);
         return date;
 
     }
@@ -976,6 +976,8 @@ public class Reservation extends javax.swing.JFrame {
     /**
      Calculates total amount due 
      */
+    
+    
     private void jButton5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton5MouseClicked
 
         try {
