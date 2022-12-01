@@ -32,10 +32,7 @@ public class Login extends javax.swing.JFrame {
         
     public void Connect(){
        try {
-           Class.forName("com.mysql.jdbc.Driver");
            connection = DriverManager.getConnection("jdbc:mysql://remotemysql.com:3306/fuvZhYQMTx", "fuvZhYQMTx", "8mfkFc55Ct");
-       } catch (ClassNotFoundException ex) {
-           Logger.getLogger(Room.class.getName()).log(Level.SEVERE, "2", ex);
        } catch (SQLException ex) {
            Logger.getLogger(Room.class.getName()).log(Level.SEVERE, "1", ex);
        }
