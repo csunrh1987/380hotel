@@ -178,7 +178,7 @@ public class Login extends javax.swing.JFrame {
             *Coonect username with password
             */
              try {
-                 pst = connection.prepareStatement("select * from username = ? and password = ?");
+                 pst = connection.prepareStatement("select * from user where username = ? and password = ?");
                  pst.setString(1, username);
                  pst.setString(2, password);
                  rs = pst.executeQuery();
