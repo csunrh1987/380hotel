@@ -2,8 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-package HotelManagement;
-
+package hotelmanagement;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -18,7 +17,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.management.modelmbean.ModelMBean;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -52,7 +50,6 @@ public class Reservation extends javax.swing.JFrame {
         loadReservation();
     }
 
-    //-------------------------------------------------------
     Connection connection;
     PreparedStatement pst;
     DefaultTableModel d;
@@ -62,7 +59,10 @@ public class Reservation extends javax.swing.JFrame {
      */
     public void Connect() {
         try {
+            Class.forName("com.mysql.jdbc.Driver");
             connection = DriverManager.getConnection("jdbc:mysql://remotemysql.com:3306/fuvZhYQMTx", "fuvZhYQMTx", "8mfkFc55Ct");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(Room.class.getName()).log(Level.SEVERE, "2", ex);
         } catch (SQLException ex) {
             Logger.getLogger(Room.class.getName()).log(Level.SEVERE, "1", ex);
         }
@@ -126,9 +126,9 @@ public class Reservation extends javax.swing.JFrame {
                 for (int i = 1; i <= c; i++) {
                     v2.add(rs.getString("reservation_id"));
                     v2.add(rs.getString("name"));
-                    v2.add(rs.getString("address")); // note update table on gui to add this 
+                    v2.add(rs.getString("address"));
                     v2.add(rs.getString("phone_num"));
-                    v2.add(rs.getString("email_address")); // new addition 
+                    v2.add(rs.getString("email_address"));
                     v2.add(rs.getString("checkin_date"));
                     v2.add(rs.getString("checkout_date"));
                     v2.add(rs.getString("bed_type"));
@@ -143,40 +143,35 @@ public class Reservation extends javax.swing.JFrame {
             Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     /**
-     Loads all Rooms available 
+     * Loads all Rooms available
      */
-    public void loadRoom()
-    {
+    public void loadRoom() {
         int c;
-        try { 
+        try {
             pst = connection.prepareStatement("select * from room");
             ResultSet rs = pst.executeQuery();
-            java.sql.ResultSetMetaData rsd =  rs.getMetaData();
+            java.sql.ResultSetMetaData rsd = rs.getMetaData();
             c = rsd.getColumnCount();
-            d = (DefaultTableModel)jTable2.getModel();
+            d = (DefaultTableModel) jTable2.getModel();
             d.setRowCount(0);
-            while(rs.next())
-            {
+            while (rs.next()) {
                 Vector v2 = new Vector();
-                for(int i = 1;i<=c;i++)
-                {
-                v2.add(rs.getString("room_id"));
-                v2.add(rs.getString("room_type"));
-                v2.add(rs.getString("bed_type"));
-                v2.add(rs.getString("room_price"));
+                for (int i = 1; i <= c; i++) {
+                    v2.add(rs.getString("room_id"));
+                    v2.add(rs.getString("room_type"));
+                    v2.add(rs.getString("bed_type"));
+                    v2.add(rs.getString("room_price"));
                 }
                 d.addRow(v2);
             }
-            
-            
+
         } catch (SQLException ex) {
             Logger.getLogger(Room.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
-    
     /**
      * Selects Distinct room number from Database
      */
@@ -184,10 +179,10 @@ public class Reservation extends javax.swing.JFrame {
         try {
             pst = connection.prepareStatement("select Distinct room_id from room");
             ResultSet rs = pst.executeQuery();
-            txtro.removeAllItems();
+            txtroomnum.removeAllItems();
 
             while (rs.next()) {
-                txtro.addItem(rs.getString("room_id"));
+                txtroomnum.addItem(rs.getString("room_id"));
             }
 
         } catch (SQLException ex) {
@@ -212,38 +207,29 @@ public class Reservation extends javax.swing.JFrame {
             Logger.getLogger(Reservation.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    /**
-     Calculates Total amount due
-     */
-    
-    // need to fix 
- 
-     
-    //==========================================================================================================
+
     /**
      * returns converted date format.
-     *
      */
-    public static Date StringToDate(String input) throws ParseException {
+    public static Date StringToDate(String dob) throws ParseException {
         // Instantiating the SimpleDateFormat class
         SimpleDateFormat formatter = new SimpleDateFormat("MMM dd,yyyy");
         // Parsing the given String to Date object
-        Date date = formatter.parse(input);
+        Date date = formatter.parse(dob);
+
         return date;
 
     }
 
     /**
-     Converts date format from ("MMM dd,yyyy") to ("yyyy-MM-dd")
+     * returns formatted date
      */
-    // Converts from ("MMM dd,YYYY") to 
+    // Converts from ("MMM dd,YYYY") to ("yyy-MM-dd")
     public static String ConvertDate(String input) throws ParseException {
 
         // Converting String to Date
         Date date = StringToDate(input);
 
-        //System.out.println(new SimpleDateFormat("MM-dd-yyyy").format(date));
         String newDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
         return newDate;
@@ -253,21 +239,23 @@ public class Reservation extends javax.swing.JFrame {
      * returns the number of nights based on two different dates.
      *
      */
+    // Date input read as "yyyy-MM-dd"
     public static long numOfStay(CharSequence checkInDate, CharSequence checkOutDate) {
         long daysDiff = 0;
         try {
-            LocalDate dateBefore = LocalDate.parse(checkInDate); // Date input read as "yyyy-MM-dd"
+            LocalDate dateBefore = LocalDate.parse(checkInDate);
 
-            LocalDate dateAfter = LocalDate.parse(checkOutDate); // Date input read as "yyyy-MM-dd"
+            LocalDate dateAfter = LocalDate.parse(checkOutDate);
 
             daysDiff = ChronoUnit.DAYS.between(dateBefore, dateAfter);
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return daysDiff; // returns the difference between two dates
+        return daysDiff;
 
     }
-                
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -302,7 +290,7 @@ public class Reservation extends javax.swing.JFrame {
         jButton4 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
-        txtro = new javax.swing.JComboBox<>();
+        txtroomnum = new javax.swing.JComboBox<>();
         jLabel12 = new javax.swing.JLabel();
         txtcheckin = new com.toedter.calendar.JDateChooser();
         txtcheckout = new com.toedter.calendar.JDateChooser();
@@ -321,7 +309,8 @@ public class Reservation extends javax.swing.JFrame {
         jPanel1.setBackground(new java.awt.Color(236, 238, 240));
         jPanel1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jLabel1.setFont(new java.awt.Font("Helvetica Neue", 1, 36)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Phosphate", 1, 48)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(0, 153, 51));
         jLabel1.setText("Reservation");
 
         jLabel2.setFont(new java.awt.Font("Helvetica Neue", 1, 18)); // NOI18N
@@ -455,7 +444,7 @@ public class Reservation extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jTable1);
 
         jLabel12.setFont(new java.awt.Font(".AppleSystemUIFont", 1, 24)); // NOI18N
-        jLabel12.setForeground(new java.awt.Color(255, 102, 0));
+        jLabel12.setForeground(new java.awt.Color(153, 51, 0));
         jLabel12.setText("jLabel12");
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
@@ -508,7 +497,7 @@ public class Reservation extends javax.swing.JFrame {
             }
         });
 
-        txttotaldue.setFont(new java.awt.Font("Krungthep", 1, 26)); // NOI18N
+        txttotaldue.setFont(new java.awt.Font("Krungthep", 1, 25)); // NOI18N
         txttotaldue.setForeground(new java.awt.Color(0, 153, 0));
         txttotaldue.setText("0");
 
@@ -602,7 +591,7 @@ public class Reservation extends javax.swing.JFrame {
                                             .addComponent(txtcheckin, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(txtcheckout, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(txtamount, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(txtro, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(txtroomnum, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(txtemail, javax.swing.GroupLayout.PREFERRED_SIZE, 141, javax.swing.GroupLayout.PREFERRED_SIZE))))
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addContainerGap())))
@@ -653,7 +642,7 @@ public class Reservation extends javax.swing.JFrame {
                             .addComponent(txtrtype, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel8)
                             .addComponent(jLabel9)
-                            .addComponent(txtro, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtroomnum, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addGap(37, 37, 37)
@@ -697,7 +686,7 @@ public class Reservation extends javax.swing.JFrame {
      * Returns current reservation Data to editor
      */
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
-        // TODO add your handling code here:
+
 
         d = (DefaultTableModel) jTable1.getModel();
         int selectIndex = jTable1.getSelectedRow();
@@ -710,18 +699,26 @@ public class Reservation extends javax.swing.JFrame {
         //checkin
         try {
             int srow = jTable1.getSelectedRow();
-            //Date date = new SimpleDateFormat("yyyy-MM-dd").parse((String)jTable1.getValueAt(srow,4));
+
             Date date = new SimpleDateFormat("MMM dd,yyyy").parse((String) jTable1.getValueAt(srow, 5));
             txtcheckin.setDate(date);
-            Date date1 = new SimpleDateFormat("MMM dd,yyyy").parse((String) jTable1.getValueAt(srow, 6));
-            txtcheckout.setDate(date1);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+        }
+
+        //checkout
+        try {
+            int srow = jTable1.getSelectedRow();
+
+            Date date = new SimpleDateFormat("MMM dd,yyyy").parse((String) jTable1.getValueAt(srow, 6));
+            txtcheckout.setDate(date);
         } catch (Exception e) {
             JOptionPane.showMessageDialog(null, e);
         }
 
         txtbtype.setSelectedItem(d.getValueAt(selectIndex, 7).toString()); // issue 
         txtrtype.setSelectedItem(d.getValueAt(selectIndex, 8).toString());
-        txtro.setSelectedItem(d.getValueAt(selectIndex, 9).toString()); // issue 
+        txtroomnum.setSelectedItem(d.getValueAt(selectIndex, 9).toString()); // issue 
         txtamount.setText(d.getValueAt(selectIndex, 10).toString());
 
         jButton1.setEnabled(false);
@@ -731,19 +728,22 @@ public class Reservation extends javax.swing.JFrame {
      * Clears reservation from Database data from page.
      */
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
+
         txtname.setText("");
         txtaddress.setText("");
         txtmobile.setText("");
         txtemail.setText("");
 
+        // check in
         txtcheckin.setDate(null);
+        //check out
         txtcheckout.setDate(null);
 
         txtrtype.setSelectedIndex(-1);
-        txtro.setSelectedIndex(-1);
+        txtroomnum.setSelectedIndex(-1);
+
+        txtrtype.setSelectedIndex(-1);
         txtbtype.setSelectedIndex(-1);
-       
         txtamount.setText("");
         txttotaldue.setText(String.valueOf(0));
         autoID();
@@ -772,16 +772,19 @@ public class Reservation extends javax.swing.JFrame {
             txtmobile.setText("");
             txtemail.setText("");
 
+            // check in
             txtcheckin.setDate(null);
+            //check out
             txtcheckout.setDate(null);
 
             txtrtype.setSelectedIndex(-1);
-            txtro.setSelectedIndex(-1);
+            txtroomnum.setSelectedIndex(-1);
+
+            txtrtype.setSelectedIndex(-1);
             txtbtype.setSelectedIndex(-1);
-            
             txtamount.setText("");
             txttotaldue.setText(String.valueOf(0));
-            
+
             autoID();
             loadReservation();
             loadRoom();
@@ -798,27 +801,29 @@ public class Reservation extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
 
         String reno = jLabel12.getText();
-        
+
         String name = txtname.getText();
         String address = txtaddress.getText();
         String mobile = txtmobile.getText();
         String email = txtemail.getText();
-        
-        SimpleDateFormat df1 = new SimpleDateFormat("MMM dd,yyyy"); // possible format change
+
+        SimpleDateFormat df1 = new SimpleDateFormat("MMM dd,yyyy");
         String StartDate = df1.format(txtcheckin.getDate());
 
-        SimpleDateFormat df2 = new SimpleDateFormat("MMM dd,yyyy"); // possible format change
+        SimpleDateFormat df2 = new SimpleDateFormat("MMM dd,yyyy");
         String EndDate = df2.format(txtcheckout.getDate());
 
         String rtype = txtrtype.getSelectedItem().toString();
-        String roomno = txtro.getSelectedItem().toString();
+        String roomno = txtroomnum.getSelectedItem().toString();
 
         String bedtype = txtbtype.getSelectedItem().toString();
         String amount = txtamount.getText();
 
         try {
-            pst = connection.prepareStatement("update reservation set name = ?, address = ?, phone_num = ?, email_address = ?, checkin_date = ?, checkout_date = ?, bed_type = ?, room_num = ?, room_type = ?, room_price = ? where reservation_id = ?");
-            
+            pst = connection.prepareStatement("update reservation set name = ?, address = ?,"
+                    + " phone_num = ?, email_address = ?, checkin_date = ?, checkout_date = ?, "
+                    + "bed_type = ?, room_num = ?, room_type = ?, room_price = ? where reservation_id = ?");
+
             pst.setString(1, name);
             pst.setString(2, address);
             pst.setString(3, mobile);
@@ -841,14 +846,14 @@ public class Reservation extends javax.swing.JFrame {
 
             txtcheckin.setDate(null);
             txtcheckout.setDate(null);
-            
+
             txtbtype.setSelectedIndex(-1);
-            txtro.setSelectedIndex(-1);
+            txtroomnum.setSelectedIndex(-1);
             txtrtype.setSelectedIndex(-1);
-            
+
             txtamount.setText("");
             txttotaldue.setText(String.valueOf(0));
-            
+
             autoID();
             loadReservation();
             loadRoom();
@@ -863,28 +868,29 @@ public class Reservation extends javax.swing.JFrame {
      * Creates new reservation into Database
      */
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+
         String reno = jLabel12.getText();
         String name = txtname.getText();
         String address = txtaddress.getText();
         String mobile = txtmobile.getText();
         String email = txtemail.getText();
 
-        SimpleDateFormat df1 = new SimpleDateFormat("MMM dd,yyyy"); // possible format change
+        SimpleDateFormat df1 = new SimpleDateFormat("MMM dd,yyyy");
         String StartDate = df1.format(txtcheckin.getDate());
 
-        SimpleDateFormat df2 = new SimpleDateFormat("MMM dd,yyyy"); // possible format change
+        SimpleDateFormat df2 = new SimpleDateFormat("MMM dd,yyyy");
         String EndDate = df2.format(txtcheckout.getDate());
 
         String rtype = txtrtype.getSelectedItem().toString();
-        String roomno = txtro.getSelectedItem().toString();
+        String roomno = txtroomnum.getSelectedItem().toString();
 
         String bedtype = txtbtype.getSelectedItem().toString();
         String amount = txtamount.getText();
-        
+
         try {
 
-            pst = connection.prepareStatement("insert into reservation(reservation_id, name, address, phone_num, email_address, checkin_date, checkout_date, bed_type, room_num, room_type, room_price)values(?,?,?,?,?,?,?,?,?,?,?)");
+            pst = connection.prepareStatement("insert into reservation(reservation_id, name, address, phone_num, "
+                    + "email_address, checkin_date, checkout_date, bed_type, room_num, room_type, room_price)values(?,?,?,?,?,?,?,?,?,?,?)");
 
             pst.setString(1, reno);
             pst.setString(2, name);
@@ -899,20 +905,17 @@ public class Reservation extends javax.swing.JFrame {
             pst.setString(11, amount);
 
             pst.executeUpdate();
-            JOptionPane.showMessageDialog(this, "Reservation Added\nSending confrmation email... ");
+            JOptionPane.showMessageDialog(this, "Reservation Added, sending confrmation email... ");
 
             txtname.setText("");
             txtaddress.setText("");
             txtmobile.setText("");
             txtemail.setText("");
-            
             txtcheckin.setDate(null);
             txtcheckout.setDate(null);
-            
             txtrtype.setSelectedIndex(-1);
-            txtro.setSelectedIndex(-1);
+            txtroomnum.setSelectedIndex(-1);
             txtbtype.setSelectedIndex(-1);
-            
             txtamount.setText("");
             txttotaldue.setText(String.valueOf(0));
 
@@ -922,18 +925,14 @@ public class Reservation extends javax.swing.JFrame {
             Connect();
             jButton1.setEnabled(true);
 
-            // email feature is turned off. 
-            
-            // send confirmation email 
-            //String tempEmail = "gabriel.sosa.191@my.csun.edu";
-            //JavaMailSender mailer = new JavaMailSender();
-            //mailer.sendEmail(name, tempEmail, StartDate, EndDate, reno, rtype, roomno,  amount);
-            //mailer.sendEmail(name, email, StartDate, EndDate, reno, rtype, roomno,  amount);
+            // send confirmation email to user 
+            JavaMailSender mailer = new JavaMailSender();
+            mailer.sendEmail(name, email, StartDate, EndDate, reno, rtype, roomno, amount);
 
         } catch (SQLException ex) {
             Logger.getLogger(Reservation.class.getName()).log(Level.SEVERE, null, ex);
-        //} catch (ParseException ex) {
-        //    Logger.getLogger(Reservation.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
+            Logger.getLogger(Reservation.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jButton1ActionPerformed
 
@@ -954,45 +953,43 @@ public class Reservation extends javax.swing.JFrame {
     }//GEN-LAST:event_txtamountActionPerformed
 
     /**
-     Loads selected room into text boxes from room table 
+     * Loads selected room into text boxes from room table
      */
     private void jTable2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable2MouseClicked
-        // TODO add your handling code here:
-        d  =(DefaultTableModel)jTable2.getModel();
-        
+
+        d = (DefaultTableModel) jTable2.getModel();
+
         int selectIndex = jTable2.getSelectedRow();
-        //jLabel12.setText(d.getValueAt(selectIndex, 0).toString());
-        txtro.setSelectedItem(d.getValueAt(selectIndex, 0).toString());
+
+        txtroomnum.setSelectedItem(d.getValueAt(selectIndex, 0).toString());
         txtrtype.setSelectedItem(d.getValueAt(selectIndex, 1).toString());
         txtbtype.setSelectedItem(d.getValueAt(selectIndex, 2).toString());
         txtamount.setText(d.getValueAt(selectIndex, 3).toString());
-        jButton1.setEnabled(true); 
-        
+        jButton1.setEnabled(true);
+
     }//GEN-LAST:event_jTable2MouseClicked
 
     /**
-     Calculates total amount due 
+     * Calculates total amount due
      */
-    
-    
     private void jButton5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton5MouseClicked
 
         try {
-        SimpleDateFormat df1 = new SimpleDateFormat("MMM dd,yyyy"); 
-        String StartDate = df1.format(txtcheckin.getDate());
-        
-        SimpleDateFormat df2 = new SimpleDateFormat("MMM dd,yyyy"); 
-        String EndDate = df2.format(txtcheckout.getDate());
-            
-        String amount = txtamount.getText();
-        
+            SimpleDateFormat df1 = new SimpleDateFormat("MMM dd,yyyy");
+            String StartDate = df1.format(txtcheckin.getDate());
+
+            SimpleDateFormat df2 = new SimpleDateFormat("MMM dd,yyyy");
+            String EndDate = df2.format(txtcheckout.getDate());
+
+            String amount = txtamount.getText();
+
             long numOfNights = numOfStay(ConvertDate(StartDate), ConvertDate(EndDate));
             long totalDue = numOfNights * Long.parseLong(amount);
-            txttotaldue.setText(String.valueOf(totalDue));  
+            txttotaldue.setText(String.valueOf(totalDue));
         } catch (ParseException ex) {
             Logger.getLogger(Reservation.class.getName()).log(Level.SEVERE, null, ex);
         }
-   
+
     }//GEN-LAST:event_jButton5MouseClicked
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
@@ -1074,7 +1071,7 @@ public class Reservation extends javax.swing.JFrame {
     private javax.swing.JTextField txtemail;
     private javax.swing.JTextField txtmobile;
     private javax.swing.JTextField txtname;
-    private javax.swing.JComboBox<String> txtro;
+    private javax.swing.JComboBox<String> txtroomnum;
     private javax.swing.JComboBox<String> txtrtype;
     private javax.swing.JLabel txttotaldue;
     private javax.swing.JLabel txttotaldue1;

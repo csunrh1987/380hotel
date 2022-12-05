@@ -150,7 +150,7 @@
                                               <Component id="txtcheckin" min="-2" pref="182" max="-2" attributes="0"/>
                                               <Component id="txtcheckout" min="-2" pref="182" max="-2" attributes="0"/>
                                               <Component id="txtamount" min="-2" pref="141" max="-2" attributes="0"/>
-                                              <Component id="txtro" min="-2" pref="141" max="-2" attributes="0"/>
+                                              <Component id="txtroomnum" min="-2" pref="141" max="-2" attributes="0"/>
                                               <Component id="txtemail" min="-2" pref="141" max="-2" attributes="0"/>
                                           </Group>
                                       </Group>
@@ -218,7 +218,7 @@
                               <Component id="txtrtype" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="txtro" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="txtroomnum" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
@@ -252,7 +252,10 @@
         <Component class="javax.swing.JLabel" name="jLabel1">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Helvetica Neue" size="36" style="1"/>
+              <Font name="Phosphate" size="48" style="1"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="33" green="99" red="0" type="rgb"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Reservation"/>
           </Properties>
@@ -543,7 +546,7 @@
             </Component>
           </SubComponents>
         </Container>
-        <Component class="javax.swing.JComboBox" name="txtro">
+        <Component class="javax.swing.JComboBox" name="txtroomnum">
           <Properties>
             <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
               <StringArray count="0"/>
@@ -559,7 +562,7 @@
               <Font name=".AppleSystemUIFont" size="24" style="1"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="0" green="66" red="ff" type="rgb"/>
+              <Color blue="0" green="33" red="99" type="rgb"/>
             </Property>
             <Property name="text" type="java.lang.String" value="jLabel12"/>
           </Properties>
@@ -665,7 +668,7 @@
         <Component class="javax.swing.JLabel" name="txttotaldue">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Krungthep" size="26" style="1"/>
+              <Font name="Krungthep" size="25" style="1"/>
             </Property>
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="0" green="99" red="0" type="rgb"/>
