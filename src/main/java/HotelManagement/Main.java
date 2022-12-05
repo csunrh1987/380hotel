@@ -146,13 +146,12 @@ public class Main extends javax.swing.JFrame {
         newUser.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
     
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {                                         
+     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {                                         
         // TODO add your handling code here:
-        
         Login newLogin = new Login();
         newLogin.setVisible(true);
-    } 
-
+        this.setVisible(false);
+    }     
     /**
      * @param args the command line arguments
      */
