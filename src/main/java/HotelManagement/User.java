@@ -326,14 +326,12 @@ public class User extends javax.swing.JFrame {
 	
 	//close button
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        // TODO add your handling code here:
         
         this.setVisible(false);
     }//GEN-LAST:event_jButton5ActionPerformed
 	
 	//click table and load user info
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {                                     
-        // TODO add your handling code here:
         
         myTable = (DefaultTableModel)jTable1.getModel();
         int selectIndex = jTable1.getSelectedRow();
@@ -349,7 +347,6 @@ public class User extends javax.swing.JFrame {
 	
 	// edit user info
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        // TODO add your handling code here:
         
         String user_id = guiUserIDwait.getText();
         String name = guiName.getText();
@@ -382,7 +379,7 @@ public class User extends javax.swing.JFrame {
 	
 	//clear user info after clicking table
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        // TODO add your handling code here:
+
         guiName.setText("");
         guiUsername.setText("");
         guiPassword.setText("");
